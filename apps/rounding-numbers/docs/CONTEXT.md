@@ -72,26 +72,68 @@ stays the same; zero out everything to the right.
   play. (Hard has no picker — random each question.)
 - **Form factor:** Responsive, tablet-first (touch). Big tap targets, no reliance
   on hover/keyboard; scales down to phone and up to desktop.
-- **Theme:** ~4 cosmetic themes (e.g. Space, Jungle, Underwater, Candy-Arcade),
-  one chosen at random when a game starts → controls palette, mascot, background,
-  and life/score icons only. Never changes math, rules, or difficulty. Background
-  music stays per-difficulty (3 generated tunes), independent of theme.
+- **Theme:** 4 cosmetic themes (Cosmic, Ocean, Jungle, Candy), one chosen at
+  random when a game starts → controls palette and mascot only. Never changes
+  math, rules, or difficulty. Background music stays per-difficulty (independent
+  of theme). **8-bit overhaul:** each theme's palette is redesigned as a cohesive
+  limited-colour retro palette; the mascot becomes a per-theme **pixel-art SVG
+  sprite** (idle/cheer/sad moods); the per-theme emoji life-icons are replaced by
+  one **universal pixel-heart** tinted by the theme's accent colour. See the
+  *Visual identity (8-bit)* decision below.
 - **Number format:** Comma thousands separators everywhere (e.g. 389,645,000),
   per common PH textbook convention.
-- **Visual art:** Built in-code with CSS/SVG/emoji — no external image files, so
-  the app stays self-contained and works offline (consistent with synthesized
-  audio).
+- **Visual art:** Built in-code with CSS/SVG — no external **raster** image files,
+  so the app stays self-contained and works offline. Emoji are being replaced by
+  hand-built **pixel-art SVG icons** (see *Visual identity (8-bit)*). The one
+  permitted external binary asset is a self-hosted **pixel font** file (see *Pixel
+  font* decision); no Google Fonts CDN (privacy).
 - **Onboarding:** Skippable opening card on first run — how to play + a 3-step
   rounding refresher from the lesson. Reachable anytime via a "?" button.
-- **Pause/quit:** Pause button freezes the game (incl. Hard timer) with
-  Resume/Quit. Quitting confirms and discards the run (no leaderboard entry).
+- **Sound gate (opening):** On the **first visit only** (persisted
+  `seenSoundPrompt` flag), a small retro "Turn on sound?" Yes/No modal opens over
+  Home *before* the How-to-Play card. The choice writes the persisted `muted`
+  setting (No → muted) and the tap also satisfies the browser audio-unlock
+  gesture. Sequence on first visit: Sound modal → How-to-Play → Home. Later
+  visits boot straight to Home with the remembered settings.
+- **Navigation (pause menu + back):** The in-game pause control opens a retro
+  **Pause Menu** — Resume / Restart / Sound toggle / Quit (to Home). *Restart*
+  re-runs the same difficulty (and same place value on Easy/Normal). Every screen
+  (Home, Difficulty, Picker, Game, Game Over, Leaderboard) carries a consistent
+  Back/Home affordance in the same position and pixel-icon style. Quitting confirms
+  and discards the run (no leaderboard entry).
 - **Language:** English UI and explanations throughout (matches lesson + PH math
   medium of instruction).
 - **Accessibility:** Digit highlighting is not color-only — the target place uses
   an underline + bold and the look-right digit is labeled, so colorblind kids can
   follow. Touch targets sized for tablets.
-- **Settings:** Mute toggle (audio on/off) and a "Clear scores" action
-  (confirm-gated) to reset the leaderboard.
+- **Settings:** Mute toggle (audio on/off), a **"Reduce effects"** toggle
+  (persisted, default off) that tones down the retro FX, and a "Clear scores"
+  action (confirm-gated) to reset the leaderboard.
+- **Visual identity (8-bit):** A cohesive 8-bit/retro look across the whole app.
+  **Global retro chrome** (always on, independent of theme): pixel font, hard 2px
+  borders, no rounded corners, no soft shadows, limited-colour fills. The 4 themes
+  supply only the per-run palette (redesigned as retro palettes) + pixel mascot
+  (see *Theme*). **SVG icons replace all emoji** — chrome icons (mute, next-track,
+  settings, check ✓, cross ✗, back/home, pause) live in the new
+  `@enilex-math-4-pkg/ui` package as reusable pixel-art components; per-theme
+  mascots live in `packages/themes`; one universal pixel-heart life icon. The
+  pixel font applies **everywhere, including the math numbers** — chosen for
+  cohesion over the readability of an alternate legible numeral font, mitigated by
+  large size, generous letter-spacing, and comma thousands separators. (See
+  ADR-0008.)
+- **Pixel font:** A self-hosted, **vendored** pixel/bitmap font under the SIL Open
+  Font License (e.g. *Press Start 2P*). Treated as a licensed asset (like audio
+  under ADR-0006): source + licence recorded in `CREDITS.md`, served from our own
+  origin via `@font-face` (no third-party font CDN — privacy for kids). OFL is not
+  on the code-dependency allow-list, so this is an explicit asset-policy exception.
+  (See ADR-0007.)
+- **Game-feel (retro FX):** Layers added to feel like an actual arcade game, all
+  gated by the "Reduce effects" setting OR `prefers-reduced-motion`: (1) **Arcade
+  HUD** — blocky `SCORE`, a persistent `HI-SCORE` (best score from the
+  leaderboard), lives as a row of pixel hearts that pop on loss/gain, chunky combo
+  meter; (2) **CRT/scanline** overlay (subtle, must keep numbers legible);
+  (3) **pixel-wipe/dither screen transitions** between screens; (4) **animated
+  tiled pixel background** per theme (low-contrast, pauses when reduced).
 - **Feedback/juice:** Playful & animated. Themed mascot reacts (cheer/jump on
   correct, gentle "aww" on wrong — never mocking), answer button green-pop /
   red-shake, correct answer glows, confetti on milestone (every-10) streaks.
@@ -111,3 +153,15 @@ stays the same; zero out everything to the right.
   misconception (see Distractors above).
 - **Streak** — count of consecutive correct answers; resets on any wrong/missed
   answer. Drives combo bonus points and (Hard) life regain.
+- **Retro chrome** — the global 8-bit visual language applied to all screens
+  regardless of theme: pixel font, hard borders, square corners, flat fills. The
+  theme only swaps the palette within this chrome.
+- **Sound gate** — the first-visit-only "Turn on sound?" modal that records the
+  audio choice and serves as the browser audio-unlock gesture before any music.
+- **Pause Menu** — the in-game menu (Resume / Restart / Sound / Quit) behind the
+  pause control. *Restart* re-runs the same difficulty and place value.
+- **HI-SCORE** — the best score on record (from the leaderboard), shown in the
+  arcade HUD alongside the current run's SCORE.
+- **Reduce effects** — a persisted setting that tones down the retro FX (CRT,
+  scanlines, background scroll, screen wipes); effects are also reduced whenever
+  the OS `prefers-reduced-motion` is set.

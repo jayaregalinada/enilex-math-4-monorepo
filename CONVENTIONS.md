@@ -187,7 +187,10 @@ Conventions are gated, not honor-system.
   **permits redistribution** in this MIT repo. Each file's **source and licence
   are recorded in `CREDITS.md`** before commit (third-party audio is never
   credited as original), and music files always have an in-code fallback. See
-  [ADR 0006](./docs/adr/0006-authored-audio-assets.md).
+  [ADR 0006](./docs/adr/0006-authored-audio-assets.md). **Fonts** are likewise
+  permitted as self-hosted licensed assets (OFL-or-more-permissive, no third-party
+  CDN, source+licence in `CREDITS.md`) — see
+  [ADR 0007](./docs/adr/0007-vendored-ofl-pixel-font.md).
 
 ## Releases & versioning
 

@@ -117,7 +117,36 @@ Conventions are gated, not honor-system.
   three rules Biome can't: filename matches its single export, exactly one value
   export per file, and every logic file has a co-located test. It fails with a
   clear per-file message.
-- **Lefthook** runs the gate. **Pre-commit:** Biome (format + lint) and the
-  convention checker on **staged files only** (fast). The full **Vitest** suite
-  runs in **CI**, using Turborepo's affected/cached task graph. Commits stay
-  snappy; merges are gated on green tests.
+- **Lefthook** runs the gate. **Pre-commit:** Biome (format + lint), the
+  convention checker, and `gitleaks` on **staged files only** (fast).
+  **commit-msg:** commitlint. The full **Vitest** suite runs in **CI**, using
+  Turborepo's affected/cached task graph. Commits stay snappy; merges are gated
+  on green tests.
+
+## Security & supply chain
+
+- **No secrets in the repo, ever.** Real values live only in each dev's untracked
+  `.env` and the deploy platform's env store. Only `.env.example` (placeholders)
+  is committed. `.env*` is gitignored. See [SECURITY.md](./SECURITY.md).
+- **Secret scanning, three layers:** `gitleaks` in the Lefthook pre-commit hook,
+  `gitleaks` in CI, and GitHub push protection + secret scanning.
+- **Dependency licenses: permissive-only.** Allowed: MIT, ISC, BSD-2/3-Clause,
+  Apache-2.0, 0BSD, CC0. Disallowed: copyleft (GPL/LGPL/AGPL) and
+  source-available/non-commercial. Enforced in CI (`pnpm check:licenses`).
+- **Dependency freshness:** Dependabot (security + weekly grouped version PRs);
+  `pnpm-lock.yaml` is committed for reproducible installs. Vet each new dependency
+  (vulnerabilities, license, trust) before adding it.
+- **No children's PII** is collected, logged, or stored anywhere — see
+  [ADR 0003](./docs/adr/0003-no-children-pii.md).
+- **No analytics/telemetry** today. If ever added, it must be cookieless,
+  anonymous, aggregate-only, with no child profiling and no ads.
+- **No copyrighted third-party assets** (textbook PDFs, art, audio). Game assets
+  are original and generated in-code (CSS/SVG/Web Audio).
+
+## Releases & versioning
+
+- **Changesets** manage versioning and changelogs for `packages/*`. A PR that
+  changes a package includes a changeset (`pnpm changeset`) with the semver bump
+  and a human-readable summary.
+- Apps (`apps/*`) are not published/versioned and are ignored by Changesets.
+- Package versions follow **semver**; the changelog is generated from changesets.

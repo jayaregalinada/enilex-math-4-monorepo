@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Secret scanning runs from day one, even before there's any app code.
+  secret-scan:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Verify every commit in a PR is DCO signed-off.
+  dco:
+    name: DCO sign-off
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check Signed-off-by trailers
+        run: |
+          base='${{ github.event.pull_request.base.sha }}'
+          head='${{ github.event.pull_request.head.sha }}'
+          missing=0
+          # Skip merge commits (--no-merges).
+          for sha in $(git rev-list --no-merges "$base..$head"); do
+            if ! git log -1 --format='%B' "$sha" | grep -qiE '^Signed-off-by: .+ <.+@.+>'; then
+              echo "::error::Commit $sha is missing a DCO Signed-off-by line (use git commit -s)."
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then exit 1; fi
+          echo "All commits are signed off."
+
+  # Lint, test, build, and convention/license checks. Gated on the workspace
+  # existing, so this is green on the docs-only repo and real once M0 lands.
+  build-test:
+    name: Lint, test & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect workspace
+        id: detect
+        run: |
+          if [ -f package.json ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "No root package.json yet — skipping build/test until M0 scaffolding lands."
+          fi
+      - name: Enable Corepack
+        if: steps.detect.outputs.ready == 'true'
+        run: corepack enable
+      - uses: actions/setup-node@v4
+        if: steps.detect.outputs.ready == 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install
+        if: steps.detect.outputs.ready == 'true'
+        run: pnpm install --frozen-lockfile
+      - name: Lint & format check
+        if: steps.detect.outputs.ready == 'true'
+        run: pnpm lint
+      - name: Convention check
+        if: steps.detect.outputs.ready == 'true'
+        run: pnpm check:conventions
+      - name: Dependency license check
+        if: steps.detect.outputs.ready == 'true'
+        run: pnpm check:licenses
+      - name: Test
+        if: steps.detect.outputs.ready == 'true'
+        run: pnpm test
+      - name: Build
+        if: steps.detect.outputs.ready == 'true'
+        run: pnpm build

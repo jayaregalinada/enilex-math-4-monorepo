@@ -1,16 +1,17 @@
+import { ThemeProvider } from '@enilex-math-4-pkg/themes';
+import type { ReactNode } from 'react';
 import { useAudio } from '@/hooks/use-audio';
-import { useGameFlow } from '@/hooks/use-game-flow';
+import { type GameFlow, useGameFlow } from '@/hooks/use-game-flow';
 import { DifficultyScreen } from '@/screens/difficulty-screen';
 import { GameOverScreen } from '@/screens/game-over-screen';
 import { GameScreen } from '@/screens/game-screen';
 import { HomeScreen } from '@/screens/home-screen';
 import { PlacePickerScreen } from '@/screens/place-picker-screen';
+import { useThemeStore } from '@/stores/use-theme-store';
 import './app.css';
 import './game.css';
 
-export function App() {
-  useAudio();
-  const flow = useGameFlow();
+function currentScreen(flow: GameFlow): ReactNode {
   const { state } = flow;
 
   switch (state.screen) {
@@ -36,4 +37,12 @@ export function App() {
     default:
       return <HomeScreen onPlay={flow.play} />;
   }
+}
+
+export function App() {
+  useAudio();
+  const flow = useGameFlow();
+  const theme = useThemeStore((store) => store.theme);
+
+  return <ThemeProvider theme={theme}>{currentScreen(flow)}</ThemeProvider>;
 }

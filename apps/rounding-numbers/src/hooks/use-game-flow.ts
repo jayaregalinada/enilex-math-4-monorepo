@@ -1,5 +1,6 @@
 import { createGame, type Difficulty, type GameState } from '@enilex-math-4-pkg/game-core';
 import { useCallback, useReducer } from 'react';
+import { useThemeStore } from '@/stores/use-theme-store';
 
 /** Which screen is showing, plus the data that screen needs. */
 export type FlowState =
@@ -63,6 +64,8 @@ export function useGameFlow(): GameFlow {
   const selectDifficulty = useCallback((difficulty: Difficulty) => {
     // Hard skips the picker — its place value is random each question.
     if (difficulty === 'hard') {
+      // Each run gets a fresh random theme.
+      useThemeStore.getState().pickRandom();
       dispatch({ type: 'startGame', difficulty, game: createGame('hard', 1) });
       return;
     }
@@ -76,6 +79,8 @@ export function useGameFlow(): GameFlow {
         return;
       }
 
+      // Each run gets a fresh random theme.
+      useThemeStore.getState().pickRandom();
       dispatch({
         type: 'startGame',
         difficulty: state.difficulty,

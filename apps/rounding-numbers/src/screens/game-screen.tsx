@@ -1,4 +1,5 @@
 import { type GameState, PLACES } from '@enilex-math-4-pkg/game-core';
+import { Mascot, type MascotMood, useTheme } from '@enilex-math-4-pkg/themes';
 import { AnswerButton, type AnswerState } from '@/components/answer-button';
 import { ExplanationPanel } from '@/components/explanation-panel';
 import { GameHud } from '@/components/game-hud';
@@ -13,6 +14,19 @@ export interface GameScreenProps {
 
 function placeLabel(exponent: number): string {
   return PLACES.find((place) => place.exponent === exponent)?.label ?? '';
+}
+
+/** Maps the run's status to the mascot's reaction. */
+function mascotMood(state: GameState): MascotMood {
+  if (state.status === 'gameOver') {
+    return 'sad';
+  }
+
+  if (state.status === 'answered') {
+    return state.lastResult?.correct ? 'cheer' : 'sad';
+  }
+
+  return 'idle';
 }
 
 /** The reveal styling for one answer button once the question is answered. */
@@ -40,6 +54,7 @@ function answerStateFor(
 /** The play screen: HUD, prompt, answer buttons, and the Easy/Normal teaching panel. */
 export function GameScreen({ initialState, onExit, onQuit }: GameScreenProps) {
   const game = useRoundingGame(initialState, onExit);
+  const theme = useTheme();
   const { state } = game;
   const chosenValue = game.chosenChoice?.value ?? null;
 
@@ -50,8 +65,11 @@ export function GameScreen({ initialState, onExit, onQuit }: GameScreenProps) {
         maxLives={state.maxLives}
         score={state.score}
         streak={state.streak}
+        lifeIcon={theme.lifeIcon}
         {...(game.timerMax !== null ? { remaining: game.remaining, timerMax: game.timerMax } : {})}
       />
+
+      <Mascot mood={mascotMood(state)} />
 
       <p className="game__prompt">
         Round <strong>{formatNumber(state.question.value)}</strong> to the nearest{' '}

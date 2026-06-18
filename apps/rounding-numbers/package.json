@@ -12,6 +12,7 @@
   "dependencies": {
     "@enilex-math-4-pkg/audio": "workspace:*",
     "@enilex-math-4-pkg/game-core": "workspace:*",
+    "@enilex-math-4-pkg/themes": "workspace:*",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "zustand": "^5.0.14"

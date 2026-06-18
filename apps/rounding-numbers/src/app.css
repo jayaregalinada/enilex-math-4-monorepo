@@ -1,0 +1,43 @@
+.app {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 1.5rem;
+}
+
+.app__card {
+  width: min(28rem, 100%);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.app__eyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.app__title {
+  margin: 0;
+  font-size: 2.25rem;
+  line-height: 1.1;
+}
+
+.app__subtitle {
+  margin: 0.75rem 0 0;
+  color: var(--color-muted);
+}
+
+.app__status {
+  margin: 1.75rem 0 0;
+  font-size: 0.95rem;
+  color: var(--color-muted);
+}

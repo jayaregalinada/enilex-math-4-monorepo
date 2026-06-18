@@ -47,11 +47,11 @@ Built with **React + TypeScript + Vite**, **pnpm workspaces + Turborepo**,
 
 ## 🚀 Quick start
 
-Requires **Node.js 22 LTS** and **pnpm** (via Corepack).
+Requires **Node.js 24 LTS** and **pnpm** (via Corepack).
 
 ```bash
 corepack enable                 # activates pnpm, no global install needed
-nvm use                         # Node 22 (see .nvmrc)
+nvm use                         # Node 24 (see .nvmrc)
 
 git clone https://github.com/jayaregalinada/enilex-math-4-monorepo.git
 cd enilex-math-4-monorepo

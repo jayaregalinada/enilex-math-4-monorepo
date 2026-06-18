@@ -1,0 +1,25 @@
+:root {
+  --color-bg: #1e1b4b;
+  --color-bg-accent: #312e81;
+  --color-surface: rgba(255, 255, 255, 0.08);
+  --color-text: #f8fafc;
+  --color-muted: #c7d2fe;
+  --color-accent: #fbbf24;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  color: var(--color-text);
+  background: radial-gradient(circle at top, var(--color-bg-accent), var(--color-bg));
+}

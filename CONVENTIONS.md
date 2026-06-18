@@ -14,7 +14,7 @@ Hard-to-reverse trade-offs behind them are recorded in [`docs/adr/`](./docs/adr/
 - **TypeScript strictness** (shared `tsconfig.base.json`): `strict: true` plus
   `noUncheckedIndexedAccess`, `noImplicitOverride`, `exactOptionalPropertyTypes`,
   `noFallthroughCasesInSwitch`, `verbatimModuleSyntax`, `isolatedModules`.
-- **Toolchain versions:** Node 22 LTS pinned via `.nvmrc`; pnpm pinned via the
+- **Toolchain versions:** Node 24 LTS pinned via `.nvmrc`; pnpm pinned via the
   root `packageManager` field (Corepack-activated) and required through
   `engines`. CI uses the same versions.
 

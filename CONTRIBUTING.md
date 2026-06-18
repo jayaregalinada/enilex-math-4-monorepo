@@ -29,7 +29,7 @@ every pull request.
 
 ## Prerequisites
 
-- **Node.js 22 LTS** (see `.nvmrc` → `nvm use`).
+- **Node.js 24 LTS** (see `.nvmrc` → `nvm use`).
 - **pnpm** via Corepack — no global install needed:
 
   ```bash

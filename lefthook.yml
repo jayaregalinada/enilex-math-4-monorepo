@@ -1,0 +1,26 @@
+# Git hooks (managed by Lefthook). Installed via the root `prepare` script.
+# Hooks stay fast: they run on staged files only. The full test suite runs in CI.
+
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      glob: '*.{js,jsx,ts,tsx,json,jsonc,css}'
+      run: pnpm exec biome check --write --no-errors-on-unmatched {staged_files}
+      stage_fixed: true
+    conventions:
+      run: pnpm check:conventions
+    gitleaks:
+      # gitleaks is optional locally (brew install gitleaks). CI always runs it.
+      run: |
+        if command -v gitleaks >/dev/null 2>&1; then
+          gitleaks protect --staged --redact --no-banner
+        else
+          echo "⚠  gitleaks not installed — skipping local secret scan."
+          echo "   Install it with: brew install gitleaks  (see docs/REPO-SETUP.md)"
+        fi
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit {1}

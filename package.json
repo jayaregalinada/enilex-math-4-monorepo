@@ -1,0 +1,36 @@
+{
+  "name": "enilex-math-4-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Open-source math learning games for Grade 4 students.",
+  "license": "MIT",
+  "author": "Jay Are Galinada",
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "check:conventions": "tsx scripts/check-conventions.ts",
+    "check:licenses": "tsx scripts/check-licenses.ts",
+    "changeset": "changeset",
+    "prepare": "lefthook install || true"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.0",
+    "@changesets/cli": "^2.31.0",
+    "@commitlint/cli": "^21.0.2",
+    "@commitlint/config-conventional": "^21.0.2",
+    "@types/node": "^24.13.2",
+    "lefthook": "^2.1.9",
+    "tsx": "^4.22.4",
+    "turbo": "^2.9.18",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  }
+}

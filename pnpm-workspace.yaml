@@ -1,0 +1,8 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+# Allow only these dependencies to run install/build scripts (pnpm hardening).
+allowBuilds:
+  esbuild: true
+  lefthook: true

@@ -1,5 +1,5 @@
 import { PLACES } from '@enilex-math-4-pkg/game-core';
-import { formatNumber } from '../lib/format-number';
+import { formatNumber } from '@/lib/format-number';
 
 export interface PlacePickerScreenProps {
   onSelect: (exponent: number) => void;

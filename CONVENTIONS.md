@@ -119,8 +119,14 @@ Hard-to-reverse trade-offs behind them are recorded in [`docs/adr/`](./docs/adr/
 - **Cross-package:** import another workspace package only through its public
   barrel — `import { roundTo } from '@enilex-math-4-pkg/game-core'`. No deep
   imports into another package's internals.
-- **Intra-package:** import directly from source files with **relative paths**
-  (`./round-to`); never import a package via its own barrel (avoids cycles).
+- **Intra-package:** import directly from source files; never import a package via
+  its own barrel (avoids cycles).
+  - **Apps** use the `@/*` path alias for cross-folder imports
+    (`@/components/answer-button`, `@/hooks/use-countdown`) instead of `../`
+    traversal; same-folder imports stay relative (`./number-line`). The alias maps
+    to `src/*` in the app's `tsconfig.json` and Vite config, so it auto-covers any
+    new top-level folder.
+  - **Packages** (flat `src/`) use relative paths (`./round-to`).
 
 ## Commit messages
 

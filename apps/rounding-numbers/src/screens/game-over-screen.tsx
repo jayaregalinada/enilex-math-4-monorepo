@@ -1,5 +1,5 @@
 import type { Difficulty } from '@enilex-math-4-pkg/game-core';
-import { formatNumber } from '../lib/format-number';
+import { formatNumber } from '@/lib/format-number';
 
 export interface GameOverScreenProps {
   score: number;

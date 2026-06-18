@@ -1,4 +1,4 @@
-import { formatNumber } from '../lib/format-number';
+import { formatNumber } from '@/lib/format-number';
 
 export interface GameHudProps {
   lives: number;

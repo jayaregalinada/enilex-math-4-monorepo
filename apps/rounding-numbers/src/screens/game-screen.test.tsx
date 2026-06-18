@@ -57,6 +57,13 @@ describe('GameScreen', () => {
     expect(screen.getByText(/to the nearest/)).toBeInTheDocument();
   });
 
+  it('shows the explanation panel after answering (Easy)', () => {
+    render(<GameScreen initialState={easyState()} onExit={vi.fn()} onQuit={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: '634,600' }));
+    // The ExplanationPanel renders a NumberLine whose label states the nearest value.
+    expect(screen.getByLabelText('634,572 is nearest 634,600')).toBeInTheDocument();
+  });
+
   it('reports the score when the run ends', () => {
     const onExit = vi.fn();
     const oneLife: GameState = { ...easyState(), lives: 1 };

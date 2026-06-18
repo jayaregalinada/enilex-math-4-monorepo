@@ -1,17 +1,9 @@
-import {
-  DIFFICULTY_CONFIG,
-  type GameState,
-  gameReducer,
-  PLACES,
-} from '@enilex-math-4-pkg/game-core';
-import { useCallback, useEffect, useReducer } from 'react';
-import { AnswerButton, type AnswerState } from '../components/answer-button';
-import { GameHud } from '../components/game-hud';
-import { useCountdown } from '../hooks/use-countdown';
-import { formatNumber } from '../lib/format-number';
-
-const CORRECT_ADVANCE_MS = 1500;
-const WRONG_ADVANCE_MS = 2000;
+import { type GameState, PLACES } from '@enilex-math-4-pkg/game-core';
+import { AnswerButton, type AnswerState } from '@/components/answer-button';
+import { ExplanationPanel } from '@/components/explanation-panel';
+import { GameHud } from '@/components/game-hud';
+import { useRoundingGame } from '@/hooks/use-rounding-game';
+import { formatNumber } from '@/lib/format-number';
 
 export interface GameScreenProps {
   initialState: GameState;
@@ -45,37 +37,11 @@ function answerStateFor(
   return 'dimmed';
 }
 
-/** The play screen: HUD, prompt, and answer buttons driven by the game-core reducer. */
+/** The play screen: HUD, prompt, answer buttons, and the Easy/Normal teaching panel. */
 export function GameScreen({ initialState, onExit, onQuit }: GameScreenProps) {
-  const [state, dispatch] = useReducer(gameReducer, initialState);
-  const timer = DIFFICULTY_CONFIG[state.difficulty].timer;
-
-  const handleTimeout = useCallback(() => dispatch({ type: 'timeout' }), []);
-  const remaining = useCountdown(timer, state.status === 'playing', handleTimeout);
-
-  // Bubble the final score up once the run ends.
-  useEffect(() => {
-    if (state.status === 'gameOver') {
-      onExit(state.score);
-    }
-  }, [state.status, state.score, onExit]);
-
-  // Hard mode: auto-advance after the answer is revealed.
-  useEffect(() => {
-    if (state.difficulty !== 'hard' || state.status !== 'answered') {
-      return;
-    }
-
-    const delay = state.lastResult?.correct ? CORRECT_ADVANCE_MS : WRONG_ADVANCE_MS;
-    const id = setTimeout(() => dispatch({ type: 'next' }), delay);
-
-    return () => clearTimeout(id);
-  }, [state.difficulty, state.status, state.lastResult]);
-
-  const handleAnswer = useCallback((value: number) => dispatch({ type: 'answer', value }), []);
-
-  const answered = state.status === 'answered';
-  const chosenValue = state.lastResult?.chosenValue ?? null;
+  const game = useRoundingGame(initialState, onExit);
+  const { state } = game;
+  const chosenValue = game.chosenChoice?.value ?? null;
 
   return (
     <section className="screen game">
@@ -84,7 +50,7 @@ export function GameScreen({ initialState, onExit, onQuit }: GameScreenProps) {
         maxLives={state.maxLives}
         score={state.score}
         streak={state.streak}
-        {...(timer !== null ? { remaining, timerMax: timer } : {})}
+        {...(game.timerMax !== null ? { remaining: game.remaining, timerMax: game.timerMax } : {})}
       />
 
       <p className="game__prompt">
@@ -97,19 +63,23 @@ export function GameScreen({ initialState, onExit, onQuit }: GameScreenProps) {
           <AnswerButton
             key={choice.value}
             value={choice.value}
-            state={answerStateFor(choice.value, state.question.correct, chosenValue, answered)}
+            state={answerStateFor(choice.value, state.question.correct, chosenValue, game.answered)}
             disabled={state.status !== 'playing'}
-            onClick={() => handleAnswer(choice.value)}
+            onClick={() => game.answer(choice.value)}
           />
         ))}
       </div>
 
-      {answered && state.difficulty !== 'hard' && (
-        <button
-          type="button"
-          className="btn btn--primary"
-          onClick={() => dispatch({ type: 'next' })}
-        >
+      {game.showExplanation && (
+        <ExplanationPanel
+          value={state.question.value}
+          exponent={state.question.exponent}
+          chosen={game.chosenChoice}
+        />
+      )}
+
+      {game.showExplanation && (
+        <button type="button" className="btn btn--primary" onClick={game.next}>
           Next →
         </button>
       )}

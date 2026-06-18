@@ -1,9 +1,9 @@
-import { useGameFlow } from './hooks/use-game-flow';
-import { DifficultyScreen } from './screens/difficulty-screen';
-import { GameOverScreen } from './screens/game-over-screen';
-import { GameScreen } from './screens/game-screen';
-import { HomeScreen } from './screens/home-screen';
-import { PlacePickerScreen } from './screens/place-picker-screen';
+import { useGameFlow } from '@/hooks/use-game-flow';
+import { DifficultyScreen } from '@/screens/difficulty-screen';
+import { GameOverScreen } from '@/screens/game-over-screen';
+import { GameScreen } from '@/screens/game-screen';
+import { HomeScreen } from '@/screens/home-screen';
+import { PlacePickerScreen } from '@/screens/place-picker-screen';
 import './app.css';
 import './game.css';
 

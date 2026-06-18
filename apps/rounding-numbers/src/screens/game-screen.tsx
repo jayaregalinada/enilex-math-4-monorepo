@@ -4,13 +4,14 @@ import { AnswerButton, type AnswerState } from '@/components/answer-button';
 import { ExplanationPanel } from '@/components/explanation-panel';
 import { GameHud } from '@/components/game-hud';
 import { GetReadyOverlay } from '@/components/get-ready-overlay';
-import { PauseDialog } from '@/components/pause-dialog';
+import { PauseMenu } from '@/components/pause-menu';
 import { useRoundingGame } from '@/hooks/use-rounding-game';
 import { formatNumber } from '@/lib/format-number';
 
 export interface GameScreenProps {
   initialState: GameState;
   onExit: (score: number) => void;
+  onRestart: () => void;
   onQuit: () => void;
 }
 
@@ -54,7 +55,7 @@ function answerStateFor(
 }
 
 /** The play screen: HUD, prompt, answer buttons, and the Easy/Normal teaching panel. */
-export function GameScreen({ initialState, onExit, onQuit }: GameScreenProps) {
+export function GameScreen({ initialState, onExit, onRestart, onQuit }: GameScreenProps) {
   const game = useRoundingGame(initialState, onExit);
   const { state } = game;
   const chosenValue = game.chosenChoice?.value ?? null;
@@ -106,7 +107,7 @@ export function GameScreen({ initialState, onExit, onQuit }: GameScreenProps) {
         Pause
       </button>
 
-      <PauseDialog open={game.paused} onResume={game.resume} onQuit={onQuit} />
+      <PauseMenu open={game.paused} onResume={game.resume} onRestart={onRestart} onQuit={onQuit} />
 
       {game.getReadyCount !== null && <GetReadyOverlay count={game.getReadyCount} />}
     </section>

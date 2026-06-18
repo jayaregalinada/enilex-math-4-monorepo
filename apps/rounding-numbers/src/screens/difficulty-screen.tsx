@@ -1,4 +1,5 @@
 import { DIFFICULTY_CONFIG, type Difficulty } from '@enilex-math-4-pkg/game-core';
+import { NavButton } from '@/components/nav-button';
 
 const ORDER: Difficulty[] = ['easy', 'normal', 'hard'];
 
@@ -17,6 +18,7 @@ export interface DifficultyScreenProps {
 export function DifficultyScreen({ onSelect, onBack }: DifficultyScreenProps) {
   return (
     <section className="screen">
+      <NavButton onClick={onBack} />
       <h2 className="screen__title">Choose a difficulty</h2>
       <div className="difficulty-list">
         {ORDER.map((difficulty) => {
@@ -37,9 +39,6 @@ export function DifficultyScreen({ onSelect, onBack }: DifficultyScreenProps) {
           );
         })}
       </div>
-      <button type="button" className="btn btn--ghost" onClick={onBack}>
-        ← Back
-      </button>
     </section>
   );
 }

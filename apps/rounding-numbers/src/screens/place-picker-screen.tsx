@@ -1,4 +1,5 @@
 import { PLACES } from '@enilex-math-4-pkg/game-core';
+import { NavButton } from '@/components/nav-button';
 import { formatNumber } from '@/lib/format-number';
 
 export interface PlacePickerScreenProps {
@@ -10,6 +11,7 @@ export interface PlacePickerScreenProps {
 export function PlacePickerScreen({ onSelect, onBack }: PlacePickerScreenProps) {
   return (
     <section className="screen">
+      <NavButton onClick={onBack} />
       <h2 className="screen__title">Pick a place value</h2>
       <div className="place-grid">
         {PLACES.map((place) => (
@@ -24,9 +26,6 @@ export function PlacePickerScreen({ onSelect, onBack }: PlacePickerScreenProps) 
           </button>
         ))}
       </div>
-      <button type="button" className="btn btn--ghost" onClick={onBack}>
-        ← Back
-      </button>
     </section>
   );
 }

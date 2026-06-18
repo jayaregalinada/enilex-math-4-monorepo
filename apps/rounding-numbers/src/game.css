@@ -206,6 +206,25 @@
   gap: 0.5rem;
 }
 
+/* Uniform top-left Back/Home control, mirroring .screen-controls. */
+.screen-nav {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1;
+}
+
+/* Pause menu: a vertical stack of full-width retro options. */
+.pause-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.pause-menu .btn {
+  width: 100%;
+}
+
 .hud__controls {
   margin-left: auto;
   display: flex;

@@ -25,7 +25,16 @@ function currentScreen(flow: GameFlow): ReactNode {
       return <PlacePickerScreen onSelect={flow.pickPlace} onBack={flow.play} />;
 
     case 'game':
-      return <GameScreen initialState={state.game} onExit={flow.endGame} onQuit={flow.goHome} />;
+      return (
+        // Keyed by runId so Restart remounts into a clean run.
+        <GameScreen
+          key={state.runId}
+          initialState={state.game}
+          onExit={flow.endGame}
+          onRestart={flow.restart}
+          onQuit={flow.goHome}
+        />
+      );
 
     case 'gameOver':
       return (

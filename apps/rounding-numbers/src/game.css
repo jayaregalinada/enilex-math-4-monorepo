@@ -671,6 +671,9 @@
 .dialog__overlay {
   position: fixed;
   inset: 0;
+  /* Above the screen (z-index 1) and the CRT overlay (z-index 50), since screens
+   * now establish a stacking context for the FX background. */
+  z-index: 100;
   background: rgba(0, 0, 0, 0.55);
   animation: dialog-fade 150ms ease-out;
 }
@@ -684,6 +687,7 @@
 
 .dialog__content {
   position: fixed;
+  z-index: 101;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

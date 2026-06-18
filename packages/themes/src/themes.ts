@@ -2,64 +2,61 @@ import type { Theme } from './theme';
 
 /**
  * The cosmetic themes. One is picked at random per run (see `pickRandomTheme`).
- * All visuals are colour + emoji — no image files (CONVENTIONS "no copyrighted
- * assets"). The first entry, Cosmic, doubles as the default palette.
+ * Palettes are cohesive, limited-colour 8-bit sets (dark backgrounds, one punchy
+ * accent) and `surface` is a solid panel colour (not translucent) for the hard
+ * retro chrome. The first entry, Cosmic, doubles as the default palette.
  */
 export const THEMES: Theme[] = [
   {
     id: 'cosmic',
     name: 'Cosmic',
     palette: {
-      bg: '#1e1b4b',
-      bgAccent: '#312e81',
-      surface: 'rgba(255, 255, 255, 0.08)',
-      text: '#f8fafc',
-      muted: '#c7d2fe',
-      accent: '#fbbf24',
+      bg: '#0d0b1f',
+      bgAccent: '#241a47',
+      surface: '#1c1640',
+      text: '#f4f4ff',
+      muted: '#b0a8e0',
+      accent: '#ffd23f',
     },
-    lifeIcon: '⭐',
-    mascot: '🚀',
+    mascot: 'rocket',
   },
   {
     id: 'ocean',
     name: 'Ocean',
     palette: {
-      bg: '#082f49',
-      bgAccent: '#0e7490',
-      surface: 'rgba(255, 255, 255, 0.08)',
-      text: '#ecfeff',
-      muted: '#a5f3fc',
-      accent: '#fde047',
+      bg: '#06243a',
+      bgAccent: '#0a3a5c',
+      surface: '#0d2f4a',
+      text: '#eaffff',
+      muted: '#8fd6e8',
+      accent: '#ffe14d',
     },
-    lifeIcon: '🐚',
-    mascot: '🐙',
+    mascot: 'octopus',
   },
   {
     id: 'jungle',
     name: 'Jungle',
     palette: {
-      bg: '#052e16',
-      bgAccent: '#15803d',
-      surface: 'rgba(255, 255, 255, 0.08)',
-      text: '#f0fdf4',
-      muted: '#bbf7d0',
-      accent: '#fb923c',
+      bg: '#0a2417',
+      bgAccent: '#14532d',
+      surface: '#103d24',
+      text: '#f0fff4',
+      muted: '#9fe0b0',
+      accent: '#ff9f1c',
     },
-    lifeIcon: '🍌',
-    mascot: '🐵',
+    mascot: 'monkey',
   },
   {
     id: 'candy',
     name: 'Candy',
     palette: {
-      bg: '#4a044e',
-      bgAccent: '#a21caf',
-      surface: 'rgba(255, 255, 255, 0.1)',
-      text: '#fdf4ff',
-      muted: '#f5d0fe',
-      accent: '#fde047',
+      bg: '#2a0a2e',
+      bgAccent: '#5e1361',
+      surface: '#45104a',
+      text: '#fff0fb',
+      muted: '#f0a8e8',
+      accent: '#ffe14d',
     },
-    lifeIcon: '🍭',
-    mascot: '🦄',
+    mascot: 'unicorn',
   },
 ];

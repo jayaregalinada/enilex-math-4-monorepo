@@ -1,17 +1,20 @@
 import * as Dialog from '@radix-ui/react-dialog';
+import { MuteToggle } from '@/components/mute-toggle';
 
-export interface PauseDialogProps {
+export interface PauseMenuProps {
   open: boolean;
   onResume: () => void;
+  onRestart: () => void;
   onQuit: () => void;
 }
 
 /**
- * The pause overlay. Driven by the paused game state, so the Hard timer freezes
- * while it's open. Resume continues the run; Quit abandons it (no score saved).
- * `modal` and not dismissable by Escape/overlay — the player must choose.
+ * The in-game pause menu. Driven by the paused game state, so the Hard timer
+ * freezes while it's open. Resume continues; Restart re-runs the same difficulty
+ * and place value; Sound toggles audio; Quit abandons the run (no score saved).
+ * Modal and not dismissable by Escape/overlay — the player must choose.
  */
-export function PauseDialog({ open, onResume, onQuit }: PauseDialogProps) {
+export function PauseMenu({ open, onResume, onRestart, onQuit }: PauseMenuProps) {
   return (
     <Dialog.Root open={open}>
       <Dialog.Portal>
@@ -27,10 +30,17 @@ export function PauseDialog({ open, onResume, onQuit }: PauseDialogProps) {
           <Dialog.Description className="dialog__description">
             Take a breather. Your run is waiting.
           </Dialog.Description>
-          <div className="dialog__actions">
+          <div className="pause-menu">
             <button type="button" className="btn btn--primary" onClick={onResume}>
               Resume
             </button>
+            <button type="button" className="btn" onClick={onRestart}>
+              Restart
+            </button>
+            <div className="settings__row">
+              <span>Sound</span>
+              <MuteToggle />
+            </div>
             <button type="button" className="btn btn--ghost" onClick={onQuit}>
               Quit
             </button>

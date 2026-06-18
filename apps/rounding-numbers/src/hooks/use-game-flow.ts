@@ -7,14 +7,23 @@ export type FlowState =
   | { screen: 'home' }
   | { screen: 'difficulty' }
   | { screen: 'placePicker'; difficulty: Difficulty }
-  | { screen: 'game'; difficulty: Difficulty; game: GameState }
+  | {
+      screen: 'game';
+      difficulty: Difficulty;
+      /** The place value this run started on — replayed verbatim on Restart. */
+      startExponent: number;
+      game: GameState;
+      /** Bumps on every Restart so the game screen remounts into a fresh run. */
+      runId: number;
+    }
   | { screen: 'gameOver'; difficulty: Difficulty; score: number }
   | { screen: 'leaderboard' };
 
 type FlowAction =
   | { type: 'toDifficulty' }
   | { type: 'toPicker'; difficulty: Difficulty }
-  | { type: 'startGame'; difficulty: Difficulty; game: GameState }
+  | { type: 'startGame'; difficulty: Difficulty; startExponent: number; game: GameState }
+  | { type: 'restart'; game: GameState }
   | { type: 'endGame'; score: number }
   | { type: 'leaderboard' }
   | { type: 'home' };
@@ -28,7 +37,18 @@ function flowReducer(state: FlowState, action: FlowAction): FlowState {
       return { screen: 'placePicker', difficulty: action.difficulty };
 
     case 'startGame':
-      return { screen: 'game', difficulty: action.difficulty, game: action.game };
+      return {
+        screen: 'game',
+        difficulty: action.difficulty,
+        startExponent: action.startExponent,
+        game: action.game,
+        runId: 0,
+      };
+
+    case 'restart':
+      return state.screen === 'game'
+        ? { ...state, game: action.game, runId: state.runId + 1 }
+        : state;
 
     case 'endGame':
       return state.screen === 'game'
@@ -46,11 +66,15 @@ function flowReducer(state: FlowState, action: FlowAction): FlowState {
   }
 }
 
+/** Hard has no place picker; createGame ignores the exponent and randomises. */
+const HARD_START_EXPONENT = 1;
+
 export interface GameFlow {
   state: FlowState;
   play: () => void;
   selectDifficulty: (difficulty: Difficulty) => void;
   pickPlace: (exponent: number) => void;
+  restart: () => void;
   endGame: (score: number) => void;
   playAgain: () => void;
   viewLeaderboard: () => void;
@@ -72,7 +96,12 @@ export function useGameFlow(): GameFlow {
     if (difficulty === 'hard') {
       // Each run gets a fresh random theme.
       useThemeStore.getState().pickRandom();
-      dispatch({ type: 'startGame', difficulty, game: createGame('hard', 1) });
+      dispatch({
+        type: 'startGame',
+        difficulty,
+        startExponent: HARD_START_EXPONENT,
+        game: createGame('hard', HARD_START_EXPONENT),
+      });
       return;
     }
 
@@ -90,11 +119,22 @@ export function useGameFlow(): GameFlow {
       dispatch({
         type: 'startGame',
         difficulty: state.difficulty,
+        startExponent: exponent,
         game: createGame(state.difficulty, exponent),
       });
     },
     [state],
   );
+
+  const restart = useCallback(() => {
+    if (state.screen !== 'game') {
+      return;
+    }
+
+    // Re-run the same difficulty + place value; a new theme keeps it fresh.
+    useThemeStore.getState().pickRandom();
+    dispatch({ type: 'restart', game: createGame(state.difficulty, state.startExponent) });
+  }, [state]);
 
   const endGame = useCallback((score: number) => dispatch({ type: 'endGame', score }), []);
   const playAgain = useCallback(() => dispatch({ type: 'toDifficulty' }), []);
@@ -106,6 +146,7 @@ export function useGameFlow(): GameFlow {
     play,
     selectDifficulty,
     pickPlace,
+    restart,
     endGame,
     playAgain,
     viewLeaderboard,

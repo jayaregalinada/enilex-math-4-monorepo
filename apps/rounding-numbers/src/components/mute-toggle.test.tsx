@@ -58,4 +58,19 @@ describe('MuteToggle', () => {
     expect(button).toHaveAttribute('aria-pressed', 'true');
     expect(gameAudio.playSoundEffect).toHaveBeenCalledWith('tap');
   });
+
+  it('renders an SVG icon inside the button in both muted and unmuted states', () => {
+    render(<MuteToggle />);
+
+    // a11y: the icon-only control swaps emoji for a pixel-art SVG; verify it renders.
+    expect(
+      screen.getByRole('button', { name: 'Mute sound' }).querySelector('svg'),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Mute sound' }));
+
+    expect(
+      screen.getByRole('button', { name: 'Unmute sound' }).querySelector('svg'),
+    ).toBeInTheDocument();
+  });
 });

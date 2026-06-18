@@ -1,6 +1,6 @@
 import type { GameState } from '@enilex-math-4-pkg/game-core';
 import { THEMES, ThemeProvider } from '@enilex-math-4-pkg/themes';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSessionStore } from '@/stores/use-session-store';
@@ -54,38 +54,47 @@ describe('GameScreen', () => {
   });
 
   it('shows the Get ready! countdown on Hard but not on Easy', () => {
-    const { unmount } = renderGame({ initialState: hardState(), onExit: vi.fn(), onQuit: vi.fn() });
+    const { unmount } = renderGame({
+      initialState: hardState(),
+      onExit: vi.fn(),
+      onRestart: vi.fn(),
+      onQuit: vi.fn(),
+    });
     expect(screen.getByText('Get ready!')).toBeInTheDocument();
     unmount();
 
     useSessionStore.setState({ game: null });
-    renderGame({ initialState: easyState(), onExit: vi.fn(), onQuit: vi.fn() });
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
     expect(screen.queryByText('Get ready!')).toBeNull();
   });
 
   it('renders the prompt for the current question', () => {
-    renderGame({ initialState: easyState(), onExit: vi.fn(), onQuit: vi.fn() });
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
     expect(screen.getByText(/634,572/)).toBeInTheDocument();
     expect(screen.getByText(/hundreds/)).toBeInTheDocument();
   });
 
   it('scores a correct answer and reveals the Next button (Easy)', () => {
-    renderGame({ initialState: easyState(), onExit: vi.fn(), onQuit: vi.fn() });
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
     fireEvent.click(screen.getByRole('button', { name: '634,600' }));
-    expect(screen.getByText('Score: 10')).toBeInTheDocument();
+    // Arcade HUD: a correct answer scores +10, shown zero-padded under the Score label.
+    // The Hi readout mirrors the same value while the run leads, so scope to the Score stat.
+    const scoreStat = screen.getByText('Score').closest('.hud__stat');
+    expect(scoreStat).not.toBeNull();
+    expect(within(scoreStat as HTMLElement).getByText('000010')).toBeInTheDocument();
     expect(screen.getByLabelText('5 of 5 lives')).toBeInTheDocument();
     // Specific name so it doesn't also match the HUD's "Next track" button.
     expect(screen.getByRole('button', { name: 'Next →' })).toBeInTheDocument();
   });
 
   it('loses a life on a wrong answer', () => {
-    renderGame({ initialState: easyState(), onExit: vi.fn(), onQuit: vi.fn() });
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
     fireEvent.click(screen.getByRole('button', { name: '634,500' }));
     expect(screen.getByLabelText('4 of 5 lives')).toBeInTheDocument();
   });
 
   it('advances to a fresh question on Next', () => {
-    renderGame({ initialState: easyState(), onExit: vi.fn(), onQuit: vi.fn() });
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
     fireEvent.click(screen.getByRole('button', { name: '634,600' }));
     fireEvent.click(screen.getByRole('button', { name: 'Next →' }));
     // Back to playing: the advance button is gone and the prompt is shown again.
@@ -94,7 +103,7 @@ describe('GameScreen', () => {
   });
 
   it('shows the explanation panel after answering (Easy)', () => {
-    renderGame({ initialState: easyState(), onExit: vi.fn(), onQuit: vi.fn() });
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
     fireEvent.click(screen.getByRole('button', { name: '634,600' }));
     // The ExplanationPanel renders a NumberLine whose label states the nearest value.
     expect(screen.getByLabelText('634,572 is nearest 634,600')).toBeInTheDocument();
@@ -103,14 +112,22 @@ describe('GameScreen', () => {
   it('reports the score when the run ends', () => {
     const onExit = vi.fn();
     const oneLife: GameState = { ...easyState(), lives: 1 };
-    renderGame({ initialState: oneLife, onExit, onQuit: vi.fn() });
+    renderGame({ initialState: oneLife, onExit, onRestart: vi.fn(), onQuit: vi.fn() });
     fireEvent.click(screen.getByRole('button', { name: '634,500' })); // wrong → 0 lives
     expect(onExit).toHaveBeenCalledWith(0);
   });
 
-  it('opens the pause dialog when Pause is pressed', () => {
-    renderGame({ initialState: easyState(), onExit: vi.fn(), onQuit: vi.fn() });
+  it('opens the pause menu when Pause is pressed', () => {
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
     fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
     expect(screen.getByRole('heading', { name: 'Paused' })).toBeInTheDocument();
+  });
+
+  it('calls onRestart when Restart is pressed in the pause menu', () => {
+    const onRestart = vi.fn();
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart, onQuit: vi.fn() });
+    fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Restart' }));
+    expect(onRestart).toHaveBeenCalledOnce();
   });
 });

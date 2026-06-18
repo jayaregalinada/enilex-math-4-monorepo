@@ -1,3 +1,4 @@
+import { IconNextTrack } from '@enilex-math-4-pkg/ui';
 import { gameAudio } from '@/lib/game-audio';
 
 export interface NextTrackButtonProps {
@@ -19,7 +20,7 @@ export function NextTrackButton({ className }: NextTrackButtonProps) {
       // a11y: icon-only control needs an explicit label.
       aria-label="Next track"
     >
-      <span aria-hidden="true">⏭️</span>
+      <IconNextTrack />
     </button>
   );
 }

@@ -52,3 +52,10 @@ apps/rounding-numbers/src/assets/music/*.wav
 !apps/rounding-numbers/src/assets/music/level-up-division-treblo.mp3
 !apps/rounding-numbers/src/assets/music/track-2-treblo.mp3
 !apps/rounding-numbers/src/assets/music/dark-and-ominus-treblo.mp3
+
+# Vendored fonts are gitignored until credited in CREDITS.md (ADR 0007). Once a
+# font's source + licence are recorded, force-add it (git add -f).
+apps/rounding-numbers/public/fonts/*.woff2
+apps/rounding-numbers/public/fonts/*.woff
+apps/rounding-numbers/public/fonts/*.ttf
+apps/rounding-numbers/public/fonts/*.otf

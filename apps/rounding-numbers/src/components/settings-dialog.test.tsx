@@ -42,6 +42,15 @@ describe('SettingsDialog', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Settings')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Mute sound' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Reduce effects' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Clear scores' })).toBeInTheDocument();
+  });
+
+  it('renders a pixel glyph inside the gear trigger', () => {
+    render(<SettingsDialog />);
+
+    // a11y: the trigger keeps its label; the icon itself is decorative.
+    const trigger = screen.getByRole('button', { name: 'Settings' });
+    expect(trigger.querySelector('svg')).not.toBeNull();
   });
 });

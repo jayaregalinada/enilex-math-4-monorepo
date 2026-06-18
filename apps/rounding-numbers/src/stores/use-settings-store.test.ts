@@ -23,11 +23,37 @@ const { useSettingsStore } = await import('./use-settings-store');
 
 describe('useSettingsStore', () => {
   beforeEach(() => {
-    useSettingsStore.setState({ muted: false });
+    useSettingsStore.setState({ muted: false, seenSoundPrompt: false, reduceEffects: false });
   });
 
   it('defaults muted to false', () => {
     expect(useSettingsStore.getState().muted).toBe(false);
+  });
+
+  it('defaults seenSoundPrompt and reduceEffects to false', () => {
+    expect(useSettingsStore.getState().seenSoundPrompt).toBe(false);
+    expect(useSettingsStore.getState().reduceEffects).toBe(false);
+  });
+
+  it('markSoundPromptSeen sets seenSoundPrompt to true', () => {
+    useSettingsStore.getState().markSoundPromptSeen();
+    expect(useSettingsStore.getState().seenSoundPrompt).toBe(true);
+  });
+
+  it('setReduceEffects sets the reduceEffects flag directly', () => {
+    useSettingsStore.getState().setReduceEffects(true);
+    expect(useSettingsStore.getState().reduceEffects).toBe(true);
+
+    useSettingsStore.getState().setReduceEffects(false);
+    expect(useSettingsStore.getState().reduceEffects).toBe(false);
+  });
+
+  it('toggleReduceEffects flips the reduceEffects flag', () => {
+    useSettingsStore.getState().toggleReduceEffects();
+    expect(useSettingsStore.getState().reduceEffects).toBe(true);
+
+    useSettingsStore.getState().toggleReduceEffects();
+    expect(useSettingsStore.getState().reduceEffects).toBe(false);
   });
 
   it('toggleMuted flips the muted flag', () => {

@@ -1,3 +1,4 @@
+import { IconCheck, IconCross } from '@enilex-math-4-pkg/ui';
 import { formatNumber } from '@/lib/format-number';
 
 export type AnswerState = 'idle' | 'correct' | 'wrong' | 'dimmed';
@@ -9,16 +10,8 @@ export interface AnswerButtonProps {
   onClick: () => void;
 }
 
-// a11y: a glyph (not just colour) marks right/wrong, for colourblind players.
-const STATE_GLYPH: Partial<Record<AnswerState, string>> = {
-  correct: '✓',
-  wrong: '✗',
-};
-
 /** A single multiple-choice answer. After answering it reveals correct/wrong styling. */
 export function AnswerButton({ value, state, disabled, onClick }: AnswerButtonProps) {
-  const glyph = STATE_GLYPH[state];
-
   return (
     <button
       type="button"
@@ -27,9 +20,10 @@ export function AnswerButton({ value, state, disabled, onClick }: AnswerButtonPr
       onClick={onClick}
     >
       <span className="answer__value">{formatNumber(value)}</span>
-      {glyph !== undefined && (
+      {/* a11y: a pixel glyph (not just colour) marks right/wrong, for colourblind players. */}
+      {(state === 'correct' || state === 'wrong') && (
         <span className="answer__glyph" aria-hidden="true">
-          {glyph}
+          {state === 'correct' ? <IconCheck /> : <IconCross />}
         </span>
       )}
     </button>

@@ -1,4 +1,5 @@
 import { LeaderboardTabs } from '@/components/leaderboard-tabs';
+import { NavButton } from '@/components/nav-button';
 
 export interface LeaderboardScreenProps {
   onBack: () => void;
@@ -8,11 +9,9 @@ export interface LeaderboardScreenProps {
 export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
   return (
     <section className="screen">
+      <NavButton onClick={onBack} />
       <h2 className="screen__title">Leaderboard</h2>
       <LeaderboardTabs />
-      <button type="button" className="btn btn--ghost" onClick={onBack}>
-        ← Back
-      </button>
     </section>
   );
 }

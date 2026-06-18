@@ -36,9 +36,10 @@ const { HomeScreen } = await import('./home-screen');
 
 describe('HomeScreen', () => {
   beforeEach(() => {
-    // HowToPlayDialog auto-opens as a modal for first-time players, which would
-    // make the Play/Leaderboard buttons inert; mark it seen so it stays closed.
-    useSettingsStore.setState({ seenHowToPlay: true, muted: false });
+    // The sound gate and HowToPlayDialog auto-open as modals for first-time
+    // players, which would make the Play/Leaderboard buttons inert; answer the
+    // sound gate (seenSoundPrompt) and mark how-to-play seen so both stay closed.
+    useSettingsStore.setState({ seenHowToPlay: true, seenSoundPrompt: true, muted: false });
   });
 
   it('plays when the Play button is pressed', () => {

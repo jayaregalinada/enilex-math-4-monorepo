@@ -1,6 +1,11 @@
 export { Mascot, type MascotProps } from './mascot';
+export { MascotMonkey } from './mascot-monkey';
+export { MascotOctopus } from './mascot-octopus';
+export { MascotRocket } from './mascot-rocket';
+export { MascotSvg, type MascotSvgProps } from './mascot-svg';
+export { MascotUnicorn } from './mascot-unicorn';
 export { pickRandomTheme, type ThemeRng } from './pick-random-theme';
-export type { MascotMood, Theme, ThemePalette } from './theme';
+export type { MascotMood, MascotSprite, MascotSpriteProps, Theme, ThemePalette } from './theme';
 export { ThemeContext } from './theme-context';
 export { themePaletteVars } from './theme-palette-vars';
 export { ThemeProvider, type ThemeProviderProps } from './theme-provider';

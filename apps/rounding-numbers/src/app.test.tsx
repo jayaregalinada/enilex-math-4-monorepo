@@ -38,8 +38,9 @@ const { App } = await import('./app');
 describe('App', () => {
   beforeEach(() => {
     useLeaderboardStore.setState({ entries: [], lastName: '' });
-    // Keep the onboarding modal closed so it doesn't block navigation.
-    useSettingsStore.setState({ seenHowToPlay: true, muted: false });
+    // Keep the onboarding modals closed so they don't block navigation: answer the
+    // sound gate (seenSoundPrompt) and mark how-to-play seen.
+    useSettingsStore.setState({ seenHowToPlay: true, seenSoundPrompt: true, muted: false });
   });
 
   it('renders the home screen with the game title', () => {

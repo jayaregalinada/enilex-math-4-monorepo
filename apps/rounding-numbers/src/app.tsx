@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { useAudio } from '@/hooks/use-audio';
 import { useCelebration } from '@/hooks/use-celebration';
 import { type FlowState, type GameFlow, useGameFlow } from '@/hooks/use-game-flow';
+import { useReduceEffects } from '@/hooks/use-reduce-effects';
 import { DifficultyScreen } from '@/screens/difficulty-screen';
 import { GameOverScreen } from '@/screens/game-over-screen';
 import { GameScreen } from '@/screens/game-screen';
@@ -25,7 +26,16 @@ function currentScreen(flow: GameFlow): ReactNode {
       return <PlacePickerScreen onSelect={flow.pickPlace} onBack={flow.play} />;
 
     case 'game':
-      return <GameScreen initialState={state.game} onExit={flow.endGame} onQuit={flow.goHome} />;
+      return (
+        // Keyed by runId so Restart remounts into a clean run.
+        <GameScreen
+          key={state.runId}
+          initialState={state.game}
+          onExit={flow.endGame}
+          onRestart={flow.restart}
+          onQuit={flow.goHome}
+        />
+      );
 
     case 'gameOver':
       return (
@@ -58,8 +68,18 @@ function musicContextFor(state: FlowState): MusicContext {
 export function App() {
   const flow = useGameFlow();
   const theme = useThemeStore((store) => store.theme);
+  const reduceEffects = useReduceEffects();
   useAudio(musicContextFor(flow.state));
   useCelebration();
 
-  return <ThemeProvider theme={theme}>{currentScreen(flow)}</ThemeProvider>;
+  return (
+    <ThemeProvider theme={theme}>
+      <div className={reduceEffects ? 'app-shell app-shell--reduced' : 'app-shell'}>
+        {/* Decorative retro FX: animated tiled background behind, CRT/scanlines on top. */}
+        <div className="fx-background" aria-hidden="true" />
+        {currentScreen(flow)}
+        <div className="fx-crt" aria-hidden="true" />
+      </div>
+    </ThemeProvider>
+  );
 }

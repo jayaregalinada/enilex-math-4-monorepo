@@ -1,3 +1,4 @@
+import { IconHeart } from '@enilex-math-4-pkg/ui';
 import { MuteToggle } from '@/components/mute-toggle';
 import { NextTrackButton } from '@/components/next-track-button';
 import { formatNumber } from '@/lib/format-number';
@@ -7,22 +8,12 @@ export interface GameHudProps {
   maxLives: number;
   score: number;
   streak: number;
-  /** Theme-supplied emoji for each life; defaults to a heart when unthemed. */
-  lifeIcon?: string;
   remaining?: number;
   timerMax?: number;
 }
 
 /** The in-game heads-up display: lives, score, streak, and (Hard) the timer bar. */
-export function GameHud({
-  lives,
-  maxLives,
-  score,
-  streak,
-  lifeIcon = '♥',
-  remaining,
-  timerMax,
-}: GameHudProps) {
+export function GameHud({ lives, maxLives, score, streak, remaining, timerMax }: GameHudProps) {
   const hearts = Array.from({ length: maxLives }, (_, i) => ({
     id: `heart-${i}`,
     filled: i < lives,
@@ -38,7 +29,7 @@ export function GameHud({
             key={heart.id}
             className={heart.filled ? 'heart heart--full' : 'heart heart--empty'}
           >
-            {lifeIcon}
+            <IconHeart filled={heart.filled} />
           </span>
         ))}
       </div>

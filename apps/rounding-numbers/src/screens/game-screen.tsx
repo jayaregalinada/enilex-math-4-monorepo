@@ -1,5 +1,5 @@
 import { type GameState, PLACES } from '@enilex-math-4-pkg/game-core';
-import { Mascot, type MascotMood, useTheme } from '@enilex-math-4-pkg/themes';
+import { Mascot, type MascotMood } from '@enilex-math-4-pkg/themes';
 import { AnswerButton, type AnswerState } from '@/components/answer-button';
 import { ExplanationPanel } from '@/components/explanation-panel';
 import { GameHud } from '@/components/game-hud';
@@ -56,7 +56,6 @@ function answerStateFor(
 /** The play screen: HUD, prompt, answer buttons, and the Easy/Normal teaching panel. */
 export function GameScreen({ initialState, onExit, onQuit }: GameScreenProps) {
   const game = useRoundingGame(initialState, onExit);
-  const theme = useTheme();
   const { state } = game;
   const chosenValue = game.chosenChoice?.value ?? null;
 
@@ -67,7 +66,6 @@ export function GameScreen({ initialState, onExit, onQuit }: GameScreenProps) {
         maxLives={state.maxLives}
         score={state.score}
         streak={state.streak}
-        lifeIcon={theme.lifeIcon}
         {...(game.timerMax !== null ? { remaining: game.remaining, timerMax: game.timerMax } : {})}
       />
 

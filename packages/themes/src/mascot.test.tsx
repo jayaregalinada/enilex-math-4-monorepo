@@ -11,14 +11,14 @@ if (sampleTheme === undefined) {
 }
 
 describe('Mascot', () => {
-  it("renders the theme's mascot emoji", () => {
+  it('renders an svg sprite inside the mascot', () => {
     render(
       <ThemeProvider theme={sampleTheme}>
         <Mascot mood="idle" />
       </ThemeProvider>,
     );
 
-    expect(screen.getByText(sampleTheme.mascot)).toBeInTheDocument();
+    expect(screen.getByRole('img').querySelector('svg')).not.toBeNull();
   });
 
   it('exposes an img role labelled with the theme name and the idle mood word', () => {
@@ -28,6 +28,7 @@ describe('Mascot', () => {
       </ThemeProvider>,
     );
 
+    // a11y: the labelled img conveys the mascot's reaction.
     const mascot = screen.getByRole('img');
     expect(mascot).toHaveAttribute('aria-label', `${sampleTheme.name} mascot watching`);
   });

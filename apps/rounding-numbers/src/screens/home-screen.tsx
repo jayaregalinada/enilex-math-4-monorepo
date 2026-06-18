@@ -2,6 +2,7 @@ import { HowToPlayDialog } from '@/components/how-to-play-dialog';
 import { MuteToggle } from '@/components/mute-toggle';
 import { NextTrackButton } from '@/components/next-track-button';
 import { SettingsDialog } from '@/components/settings-dialog';
+import { SoundGateDialog } from '@/components/sound-gate-dialog';
 
 export interface HomeScreenProps {
   onPlay: () => void;
@@ -27,6 +28,7 @@ export function HomeScreen({ onPlay, onLeaderboard }: HomeScreenProps) {
         Leaderboard
       </button>
       <HowToPlayDialog />
+      <SoundGateDialog />
     </section>
   );
 }

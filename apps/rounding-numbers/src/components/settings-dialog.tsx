@@ -1,6 +1,7 @@
 import { IconSettings } from '@enilex-math-4-pkg/ui';
 import * as Dialog from '@radix-ui/react-dialog';
 import { ClearScoresButton } from '@/components/clear-scores-button';
+import { EffectsToggle } from '@/components/effects-toggle';
 import { MuteToggle } from '@/components/mute-toggle';
 
 /**
@@ -21,12 +22,16 @@ export function SettingsDialog() {
         <Dialog.Content className="dialog__content">
           <Dialog.Title className="dialog__title">Settings</Dialog.Title>
           <Dialog.Description className="dialog__description">
-            Sound and saved scores.
+            Sound, effects, and saved scores.
           </Dialog.Description>
           <div className="settings">
             <div className="settings__row">
               <span>Sound</span>
               <MuteToggle />
+            </div>
+            <div className="settings__row">
+              <span>Reduce effects</span>
+              <EffectsToggle />
             </div>
             <div className="settings__row">
               <span>Leaderboard</span>

@@ -42,6 +42,7 @@ describe('SettingsDialog', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Settings')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Mute sound' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Reduce effects' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Clear scores' })).toBeInTheDocument();
   });
 

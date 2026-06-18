@@ -8,7 +8,9 @@ import { expect, test } from '@playwright/test';
 test('plays a full run and records a leaderboard entry', async ({ page }) => {
   await page.goto('/');
 
-  // Onboarding card opens on first visit — dismiss it.
+  // First-visit sound gate opens before anything else — answer it ("No" keeps the
+  // smoke test quiet), then dismiss the how-to-play card that follows.
+  await page.getByRole('button', { name: 'No' }).click();
   await page.getByRole('button', { name: 'Got it' }).click();
 
   // Home → Difficulty → Easy → place picker → game.

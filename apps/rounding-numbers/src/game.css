@@ -1,4 +1,5 @@
 .screen {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -133,6 +134,35 @@
 .hud__streak {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+}
+
+.mute-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  background: transparent;
+  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.15));
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.mute-toggle:hover {
+  background: var(--color-surface, rgba(0, 0, 0, 0.05));
+}
+
+.mute-toggle--corner {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.hud__mute {
+  margin-left: auto;
 }
 
 .timer {

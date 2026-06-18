@@ -1,0 +1,12 @@
+export type { AudioContextFactory } from './create-audio-context';
+export { createAudioContext } from './create-audio-context';
+export type { AudioEngine, AudioEngineOptions } from './create-audio-engine';
+export { createAudioEngine } from './create-audio-engine';
+export type { MusicPlayer } from './create-music-player';
+export { createMusicPlayer } from './create-music-player';
+export type { MusicNote, MusicTrack } from './music-tracks';
+export { MUSIC_TRACKS } from './music-tracks';
+export type { SoundEffectName } from './play-sound-effect';
+export { playSoundEffect } from './play-sound-effect';
+export type { ToneSpec } from './play-tone';
+export { playTone } from './play-tone';

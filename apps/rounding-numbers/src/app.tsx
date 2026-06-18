@@ -1,3 +1,4 @@
+import { useAudio } from '@/hooks/use-audio';
 import { useGameFlow } from '@/hooks/use-game-flow';
 import { DifficultyScreen } from '@/screens/difficulty-screen';
 import { GameOverScreen } from '@/screens/game-over-screen';
@@ -8,6 +9,7 @@ import './app.css';
 import './game.css';
 
 export function App() {
+  useAudio();
   const flow = useGameFlow();
   const { state } = flow;
 

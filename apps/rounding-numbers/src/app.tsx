@@ -7,6 +7,7 @@ import { DifficultyScreen } from '@/screens/difficulty-screen';
 import { GameOverScreen } from '@/screens/game-over-screen';
 import { GameScreen } from '@/screens/game-screen';
 import { HomeScreen } from '@/screens/home-screen';
+import { LeaderboardScreen } from '@/screens/leaderboard-screen';
 import { PlacePickerScreen } from '@/screens/place-picker-screen';
 import { useThemeStore } from '@/stores/use-theme-store';
 import './app.css';
@@ -31,12 +32,16 @@ function currentScreen(flow: GameFlow): ReactNode {
           score={state.score}
           difficulty={state.difficulty}
           onPlayAgain={flow.playAgain}
+          onLeaderboard={flow.viewLeaderboard}
           onHome={flow.goHome}
         />
       );
 
+    case 'leaderboard':
+      return <LeaderboardScreen onBack={flow.goHome} />;
+
     default:
-      return <HomeScreen onPlay={flow.play} />;
+      return <HomeScreen onPlay={flow.play} onLeaderboard={flow.viewLeaderboard} />;
   }
 }
 

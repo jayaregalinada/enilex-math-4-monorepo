@@ -405,3 +405,162 @@
   display: flex;
   gap: 0.75rem;
 }
+
+/* Buttons ---------------------------------------------------------------- */
+.btn--danger {
+  background: #dc2626;
+  color: #fff;
+}
+
+/* Dialogs (Radix Dialog / AlertDialog) ---------------------------------- */
+.dialog__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  animation: dialog-fade 150ms ease-out;
+}
+
+.dialog__content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(26rem, calc(100vw - 2rem));
+  padding: 1.5rem;
+  background: var(--color-bg-accent);
+  color: var(--color-text);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 1rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  animation: dialog-pop 150ms ease-out;
+}
+
+.dialog__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+}
+
+.dialog__description {
+  margin: 0 0 1.25rem;
+  color: var(--color-muted);
+}
+
+.dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.name-entry__input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  font-size: 1.1rem;
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+}
+
+@keyframes dialog-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog__overlay,
+  .dialog__content {
+    animation: none;
+  }
+}
+
+/* Settings -------------------------------------------------------------- */
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.settings__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* Leaderboard ----------------------------------------------------------- */
+.leaderboard {
+  width: 100%;
+}
+
+.leaderboard__tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.leaderboard__tab {
+  flex: 1;
+  padding: 0.5rem 0.25rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-muted);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.leaderboard__tab[data-state="active"] {
+  color: var(--color-text);
+  border-bottom-color: var(--color-accent);
+}
+
+.leaderboard__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.leaderboard__row {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-surface);
+  border-radius: 0.5rem;
+}
+
+.leaderboard__rank {
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.leaderboard__name {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboard__points {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.leaderboard__empty {
+  color: var(--color-muted);
+  padding: 1.5rem 0;
+}

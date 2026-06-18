@@ -6,3 +6,9 @@ packages:
 allowBuilds:
   esbuild: true
   lefthook: true
+
+# Force a single React 19 types version (Radix pulls @types/react 18 transitively,
+# which breaks JSX typing under React 19 — "bigint is not assignable to ReactNode").
+overrides:
+  '@types/react': ^19.2.17
+  '@types/react-dom': ^19.2.3

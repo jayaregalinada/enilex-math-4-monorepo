@@ -1,15 +1,27 @@
 import type { Difficulty } from '@enilex-math-4-pkg/game-core';
+import { useState } from 'react';
+import { NameEntryDialog } from '@/components/name-entry-dialog';
 import { formatNumber } from '@/lib/format-number';
 
 export interface GameOverScreenProps {
   score: number;
   difficulty: Difficulty;
   onPlayAgain: () => void;
+  onLeaderboard: () => void;
   onHome: () => void;
 }
 
-/** End-of-run summary with the final score and replay options. */
-export function GameOverScreen({ score, difficulty, onPlayAgain, onHome }: GameOverScreenProps) {
+/** End-of-run summary: final score, a name-entry prompt to save it, and replay options. */
+export function GameOverScreen({
+  score,
+  difficulty,
+  onPlayAgain,
+  onLeaderboard,
+  onHome,
+}: GameOverScreenProps) {
+  // Prompt to save the score as soon as the run ends; dismissable.
+  const [nameOpen, setNameOpen] = useState(true);
+
   return (
     <section className="screen game-over">
       <h2 className="screen__title">Game over</h2>
@@ -19,10 +31,19 @@ export function GameOverScreen({ score, difficulty, onPlayAgain, onHome }: GameO
         <button type="button" className="btn btn--primary" onClick={onPlayAgain}>
           Play again
         </button>
+        <button type="button" className="btn btn--ghost" onClick={onLeaderboard}>
+          Leaderboard
+        </button>
         <button type="button" className="btn btn--ghost" onClick={onHome}>
           Home
         </button>
       </div>
+      <NameEntryDialog
+        open={nameOpen}
+        score={score}
+        difficulty={difficulty}
+        onClose={() => setNameOpen(false)}
+      />
     </section>
   );
 }

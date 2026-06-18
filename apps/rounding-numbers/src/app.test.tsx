@@ -1,8 +1,44 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
-import { App } from './app';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// App mounts SettingsDialog (mute toggle) and the leaderboard, whose stores
+// persist via localStorage; jsdom here has none, so stub one before they import.
+vi.hoisted(() => {
+  const storage = new Map<string, string>();
+  vi.stubGlobal('localStorage', {
+    getItem: (key: string) => storage.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      storage.set(key, value);
+    },
+    removeItem: (key: string) => {
+      storage.delete(key);
+    },
+    clear: () => storage.clear(),
+    key: () => null,
+    length: 0,
+  });
+});
+
+vi.mock('@/lib/game-audio', () => ({
+  gameAudio: {
+    resume: vi.fn(),
+    setMuted: vi.fn(),
+    playSoundEffect: vi.fn(),
+    setMusicContext: vi.fn(),
+    skipTrack: vi.fn(),
+    stopMusic: vi.fn(),
+    dispose: vi.fn(),
+  },
+}));
+
+const { useLeaderboardStore } = await import('@/stores/use-leaderboard-store');
+const { App } = await import('./app');
 
 describe('App', () => {
+  beforeEach(() => {
+    useLeaderboardStore.setState({ entries: [], lastName: '' });
+  });
+
   it('renders the home screen with the game title', () => {
     render(<App />);
     expect(screen.getByRole('heading', { name: /rounding numbers/i })).toBeInTheDocument();
@@ -22,5 +58,11 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Play' }));
     fireEvent.click(screen.getByRole('button', { name: /easy/i }));
     expect(screen.getByRole('heading', { name: /pick a place value/i })).toBeInTheDocument();
+  });
+
+  it('navigates Home → Leaderboard', () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Leaderboard' }));
+    expect(screen.getByRole('heading', { name: 'Leaderboard' })).toBeInTheDocument();
   });
 });

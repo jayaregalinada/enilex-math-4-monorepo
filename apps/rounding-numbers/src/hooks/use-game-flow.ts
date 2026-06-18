@@ -8,13 +8,15 @@ export type FlowState =
   | { screen: 'difficulty' }
   | { screen: 'placePicker'; difficulty: Difficulty }
   | { screen: 'game'; difficulty: Difficulty; game: GameState }
-  | { screen: 'gameOver'; difficulty: Difficulty; score: number };
+  | { screen: 'gameOver'; difficulty: Difficulty; score: number }
+  | { screen: 'leaderboard' };
 
 type FlowAction =
   | { type: 'toDifficulty' }
   | { type: 'toPicker'; difficulty: Difficulty }
   | { type: 'startGame'; difficulty: Difficulty; game: GameState }
   | { type: 'endGame'; score: number }
+  | { type: 'leaderboard' }
   | { type: 'home' };
 
 function flowReducer(state: FlowState, action: FlowAction): FlowState {
@@ -33,6 +35,9 @@ function flowReducer(state: FlowState, action: FlowAction): FlowState {
         ? { screen: 'gameOver', difficulty: state.difficulty, score: action.score }
         : state;
 
+    case 'leaderboard':
+      return { screen: 'leaderboard' };
+
     case 'home':
       return { screen: 'home' };
 
@@ -48,6 +53,7 @@ export interface GameFlow {
   pickPlace: (exponent: number) => void;
   endGame: (score: number) => void;
   playAgain: () => void;
+  viewLeaderboard: () => void;
   goHome: () => void;
 }
 
@@ -92,7 +98,17 @@ export function useGameFlow(): GameFlow {
 
   const endGame = useCallback((score: number) => dispatch({ type: 'endGame', score }), []);
   const playAgain = useCallback(() => dispatch({ type: 'toDifficulty' }), []);
+  const viewLeaderboard = useCallback(() => dispatch({ type: 'leaderboard' }), []);
   const goHome = useCallback(() => dispatch({ type: 'home' }), []);
 
-  return { state, play, selectDifficulty, pickPlace, endGame, playAgain, goHome };
+  return {
+    state,
+    play,
+    selectDifficulty,
+    pickPlace,
+    endGame,
+    playAgain,
+    viewLeaderboard,
+    goHome,
+  };
 }

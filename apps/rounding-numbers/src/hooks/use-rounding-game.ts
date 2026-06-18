@@ -2,6 +2,7 @@ import { type Choice, DIFFICULTY_CONFIG, type GameState } from '@enilex-math-4-p
 import { useCallback, useEffect, useRef } from 'react';
 import { useSessionStore } from '@/stores/use-session-store';
 import { useCountdown } from './use-countdown';
+import { useGetReady } from './use-get-ready';
 
 const CORRECT_ADVANCE_MS = 1500;
 const WRONG_ADVANCE_MS = 2000;
@@ -11,6 +12,8 @@ export interface RoundingGame {
   state: GameState;
   remaining: number;
   timerMax: number | null;
+  /** The "Get ready!" 3-2-1 number while it counts in, or `null` once play starts. */
+  getReadyCount: number | null;
   answered: boolean;
   paused: boolean;
   chosenChoice: Choice | null;
@@ -48,12 +51,16 @@ export function useRoundingGame(
 
   const timerMax = DIFFICULTY_CONFIG[state.difficulty].timer;
 
+  // Hard mode opens with a "Get ready!" 3-2-1; the clock stays frozen until "go".
+  const getReady = useGetReady(state.difficulty === 'hard');
+
   const handleTimeout = useCallback(() => {
     useSessionStore.getState().dispatch({ type: 'timeout' });
   }, []);
   // Reset the clock per question (keyed by place + value), not on pause/resume.
   const resetKey = `${state.exponent}:${state.question.value}`;
-  const remaining = useCountdown(timerMax, state.status === 'playing', handleTimeout, resetKey);
+  const timerActive = state.status === 'playing' && !getReady.active;
+  const remaining = useCountdown(timerMax, timerActive, handleTimeout, resetKey);
 
   // Bubble the final score up once the run ends.
   useEffect(() => {
@@ -98,6 +105,7 @@ export function useRoundingGame(
     state,
     remaining,
     timerMax,
+    getReadyCount: getReady.active ? getReady.count : null,
     answered,
     paused: state.status === 'paused',
     chosenChoice,

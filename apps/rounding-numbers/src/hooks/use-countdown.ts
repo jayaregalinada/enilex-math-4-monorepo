@@ -18,6 +18,9 @@ export function useCountdown(
   onElapsedRef.current = onElapsed;
   const remainingRef = useRef(remaining);
   remainingRef.current = remaining;
+  // The resetKey the ticking effect last armed for. Lets us tell a fresh
+  // question (start from full) apart from a pause/resume (resume from time left).
+  const armedKeyRef = useRef<string | null>(null);
 
   // A new question (resetKey change) refills the clock.
   // biome-ignore lint/correctness/useExhaustiveDependencies: refill is keyed on resetKey, not remaining.
@@ -26,13 +29,17 @@ export function useCountdown(
   }, [resetKey, durationSeconds]);
 
   // Tick while active, resuming from whatever time is left.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: resetKey re-arms ticking after a refill.
   useEffect(() => {
     if (durationSeconds === null || !active) {
       return;
     }
 
-    const startRemaining = remainingRef.current;
+    // A new question starts from the full duration; a resume picks up the time
+    // that was left. Reading remainingRef on a fresh question is unsafe — the
+    // refill effect's setRemaining hasn't flushed yet, so the ref is stale.
+    const isNewQuestion = armedKeyRef.current !== resetKey;
+    armedKeyRef.current = resetKey;
+    const startRemaining = isNewQuestion ? (durationSeconds ?? 0) : remainingRef.current;
     const startedAt = Date.now();
     const id = setInterval(() => {
       const left = startRemaining - (Date.now() - startedAt) / 1000;

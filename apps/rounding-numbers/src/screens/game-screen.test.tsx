@@ -44,9 +44,23 @@ function easyState(): GameState {
   };
 }
 
+function hardState(): GameState {
+  return { ...easyState(), difficulty: 'hard', lives: 3, maxLives: 3 };
+}
+
 describe('GameScreen', () => {
   beforeEach(() => {
     useSessionStore.setState({ game: null });
+  });
+
+  it('shows the Get ready! countdown on Hard but not on Easy', () => {
+    const { unmount } = renderGame({ initialState: hardState(), onExit: vi.fn(), onQuit: vi.fn() });
+    expect(screen.getByText('Get ready!')).toBeInTheDocument();
+    unmount();
+
+    useSessionStore.setState({ game: null });
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onQuit: vi.fn() });
+    expect(screen.queryByText('Get ready!')).toBeNull();
   });
 
   it('renders the prompt for the current question', () => {

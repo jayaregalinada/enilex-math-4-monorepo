@@ -15,7 +15,8 @@ export function PauseDialog({ open, onResume, onQuit }: PauseDialogProps) {
   return (
     <Dialog.Root open={open}>
       <Dialog.Portal>
-        <Dialog.Overlay className="dialog__overlay" />
+        {/* Blur + darken the board so the question can't be read while paused. */}
+        <Dialog.Overlay className="dialog__overlay dialog__overlay--blur" />
         <Dialog.Content
           className="dialog__content"
           // Keep focus on the choice; don't let Escape/outside-click dismiss it.

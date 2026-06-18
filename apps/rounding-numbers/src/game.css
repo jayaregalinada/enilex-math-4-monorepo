@@ -374,6 +374,54 @@
   margin-top: 0.5rem;
 }
 
+/* Get ready (Hard pre-roll) --------------------------------------------- */
+.get-ready {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.get-ready__label {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.get-ready__count {
+  margin: 0;
+  font-size: 6rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+  animation: get-ready-pop 0.5s ease-out;
+}
+
+@keyframes get-ready-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .get-ready__count {
+    animation: none;
+  }
+}
+
 /* Explanation (teaching layer) ----------------------------------------- */
 .explanation {
   display: flex;
@@ -496,6 +544,13 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
   animation: dialog-fade 150ms ease-out;
+}
+
+/* Pause: hide the board entirely behind a strong blur so the question can't be read. */
+.dialog__overlay--blur {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .dialog__content {

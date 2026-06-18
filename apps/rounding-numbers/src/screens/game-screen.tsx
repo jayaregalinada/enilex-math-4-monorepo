@@ -3,6 +3,7 @@ import { Mascot, type MascotMood, useTheme } from '@enilex-math-4-pkg/themes';
 import { AnswerButton, type AnswerState } from '@/components/answer-button';
 import { ExplanationPanel } from '@/components/explanation-panel';
 import { GameHud } from '@/components/game-hud';
+import { GetReadyOverlay } from '@/components/get-ready-overlay';
 import { PauseDialog } from '@/components/pause-dialog';
 import { useRoundingGame } from '@/hooks/use-rounding-game';
 import { formatNumber } from '@/lib/format-number';
@@ -108,6 +109,8 @@ export function GameScreen({ initialState, onExit, onQuit }: GameScreenProps) {
       </button>
 
       <PauseDialog open={game.paused} onResume={game.resume} onQuit={onQuit} />
+
+      {game.getReadyCount !== null && <GetReadyOverlay count={game.getReadyCount} />}
     </section>
   );
 }

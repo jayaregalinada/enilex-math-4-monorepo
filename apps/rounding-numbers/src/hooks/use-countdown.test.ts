@@ -63,4 +63,27 @@ describe('useCountdown', () => {
     rerender({ resetKey: 'q2' });
     expect(result.current).toBe(10);
   });
+
+  it('counts the full duration again after a resetKey change, not the stale remaining', () => {
+    const onElapsed = vi.fn();
+    const { result, rerender } = renderHook(
+      ({ resetKey }: { resetKey: string }) => useCountdown(10, true, onElapsed, resetKey),
+      { initialProps: { resetKey: 'q1' } },
+    );
+
+    // Drain almost the entire first question's clock.
+    act(() => vi.advanceTimersByTime(9_000));
+    expect(result.current).toBeLessThanOrEqual(1);
+
+    // A new question must run the FULL duration again, not the ~1s that was left.
+    rerender({ resetKey: 'q2' });
+    expect(result.current).toBe(10);
+
+    act(() => vi.advanceTimersByTime(5_000));
+    expect(result.current).toBeGreaterThan(0);
+    expect(onElapsed).not.toHaveBeenCalled();
+
+    act(() => vi.advanceTimersByTime(5_500));
+    expect(onElapsed).toHaveBeenCalled();
+  });
 });

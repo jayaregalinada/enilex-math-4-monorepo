@@ -13,29 +13,48 @@ original.
 
 `apps/rounding-numbers/src/assets/music/`
 
-All tracks below are **royalty-free for non-commercial use and distribution**,
-sourced from FesliyanStudios and Treblo. The "Redistribution OK?" column asks
-whether the licence permits redistribution **under this repo's MIT terms** (which
-include commercial use) — see the warning below.
+These are the tracks currently used **locally** during development. They are
+**royalty-free for use inside a work** (a game), but neither source permits
+**redistributing the raw audio file on its own** — and committing an `.mp3` into
+this public MIT repo *is* standalone redistribution. So none of them are
+committed; they stay gitignored (`*.mp3` guard in `.gitignore`) and the
+synthesized fallback (`packages/audio` → `MUSIC_TRACKS`) keeps each pool playing.
 
-| File | Title | Author / Source | Licence | Redistribution OK? (MIT) |
-|------|-------|-----------------|---------|--------------------------|
-| `retro-funk-fesliyan-studios.mp3` | 8 Bit Retro Funk | David Renda · FesliyanStudios.com | Royalty-free, non-commercial distribution | ❌ non-commercial only |
-| `boss-time-feslyan-studios-hard-mode.mp3` | Boss Time | FesliyanStudios.com | Royalty-free, non-commercial distribution | ❌ non-commercial only |
-| `retro-platforming-david-fesliyan-hard-mode.mp3` | Retro Platforming | David Fesliyan · FesliyanStudios.com | Royalty-free, non-commercial distribution | ❌ non-commercial only |
-| `dark-and-ominus-treblo.mp3` | Dark and Ominous | Treblo | Royalty-free, non-commercial distribution | ❌ non-commercial only |
-| `level-up-division-treblo.mp3` | Level Up | Treblo | Royalty-free, non-commercial distribution | ❌ non-commercial only |
-| `track-2-treblo.mp3` | Treblo (untitled) | Treblo | Royalty-free, non-commercial distribution | ❌ non-commercial only |
+| File | Title | Author / Source | Licence | Committable to repo? |
+|------|-------|-----------------|---------|----------------------|
+| `retro-funk-fesliyan-studios.mp3` | 8 Bit Retro Funk | David Renda · FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no — file redistribution not permitted |
+| `boss-time-feslyan-studios-hard-mode.mp3` | Boss Time | FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no — file redistribution not permitted |
+| `retro-platforming-david-fesliyan-hard-mode.mp3` | Retro Platforming | David Fesliyan · FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no — file redistribution not permitted |
+| `dark-and-ominus-treblo.mp3` | Dark and Ominous | Treblo | Pixabay Content License (no standalone file redistribution) | ❌ no — file redistribution not permitted |
+| `level-up-division-treblo.mp3` | Level Up | Treblo | Pixabay Content License (no standalone file redistribution) | ❌ no — file redistribution not permitted |
+| `track-2-treblo.mp3` | Treblo (untitled) | Treblo | Pixabay Content License (no standalone file redistribution) | ❌ no — file redistribution not permitted |
 
-> ⚠️ **Licence conflict — these files are not committed.** The repo is
-> [MIT](./LICENSE), which grants **commercial** redistribution. A
-> "royalty-free, non-commercial distribution" licence does **not** permit that,
-> so per [ADR 0006](./docs/adr/0006-authored-audio-assets.md) these files **must
-> not be committed**. They stay gitignored (`*.mp3` guard in `.gitignore`) and
-> the synthesized fallback (`packages/audio` → `MUSIC_TRACKS`) covers each pool,
-> so the app still has music. To bundle music in the repo, replace these with
-> tracks under a redistribution-friendly licence (e.g. CC0, CC-BY, or MIT) or
-> original work by a contributor.
+> ⚠️ **Why none are committed.** Per [ADR 0006](./docs/adr/0006-authored-audio-assets.md),
+> a committed audio file must be under a licence that **permits redistribution**
+> in this MIT repo. Both FesliyanStudios and Pixabay/Treblo allow using the music
+> *within* a project but **forbid redistributing the audio file itself**, which is
+> what committing it here would do. These remain local-only dev assets.
+
+### Thanks (attribution for local use)
+
+Even though these aren't committed, the local build uses their work — with thanks:
+
+- Music from **[FesliyanStudios](https://www.fesliyanstudios.com)** (David Renda, David Fesliyan).
+- Music by **Treblo**, via [Pixabay](https://pixabay.com/music/).
+
+### Adding music that *can* be committed
+
+To bundle music in the repo, use tracks whose licence **permits redistribution**,
+then add a row above and (if required) a thanks line here:
+
+- **CC0 / public domain** — no attribution required, but still credit it as a courtesy.
+- **CC-BY** — redistribution allowed *with* attribution; record the required
+  credit in the **Thanks** list above (this single file is the one place for it).
+- **Original work** by a contributor — note it as original.
+
+Sources that explicitly allow file redistribution include
+[OpenGameArt](https://opengameart.org) (filter to CC0/CC-BY) and
+[incompetech](https://incompetech.com) (Kevin MacLeod, CC-BY 4.0).
 
 ## Fonts
 

@@ -1,3 +1,4 @@
+import type { MusicContext } from '@enilex-math-4-pkg/audio';
 import type { GameState } from '@enilex-math-4-pkg/game-core';
 import { act, fireEvent, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -26,7 +27,8 @@ vi.mock('@/lib/game-audio', () => ({
     resume: vi.fn(),
     setMuted: vi.fn(),
     playSoundEffect: vi.fn(),
-    startMusic: vi.fn(),
+    setMusicContext: vi.fn(),
+    skipTrack: vi.fn(),
     stopMusic: vi.fn(),
     dispose: vi.fn(),
   },
@@ -71,13 +73,13 @@ describe('useAudio', () => {
   it('syncs the muted setting onto the engine on mount', () => {
     useSettingsStore.setState({ muted: true });
 
-    renderHook(() => useAudio());
+    renderHook(() => useAudio('general'));
 
     expect(gameAudio.setMuted).toHaveBeenCalledWith(true);
   });
 
   it('mirrors later mute toggles onto the engine', () => {
-    renderHook(() => useAudio());
+    renderHook(() => useAudio('general'));
     vi.clearAllMocks();
 
     act(() => useSettingsStore.getState().toggleMuted());
@@ -85,16 +87,29 @@ describe('useAudio', () => {
     expect(gameAudio.setMuted).toHaveBeenCalledWith(true);
   });
 
-  it('starts music when a session begins', () => {
-    renderHook(() => useAudio());
+  it('follows the given music context', () => {
+    const { rerender } = renderHook(({ context }: { context: MusicContext }) => useAudio(context), {
+      initialProps: { context: 'general' },
+    });
+
+    expect(gameAudio.setMusicContext).toHaveBeenCalledWith('general');
+
+    rerender({ context: 'hard' });
+
+    expect(gameAudio.setMusicContext).toHaveBeenCalledWith('hard');
+  });
+
+  it('plays an SFX off a session transition', () => {
+    renderHook(() => useAudio('general'));
 
     act(() => useSessionStore.getState().start(easyState()));
+    act(() => useSessionStore.getState().dispatch({ type: 'answer', value: 634_600 }));
 
-    expect(gameAudio.startMusic).toHaveBeenCalledWith('easy');
+    expect(gameAudio.playSoundEffect).toHaveBeenCalledWith('correct');
   });
 
   it('resumes the engine on the first pointerdown gesture', () => {
-    renderHook(() => useAudio());
+    renderHook(() => useAudio('general'));
 
     fireEvent.pointerDown(window);
 

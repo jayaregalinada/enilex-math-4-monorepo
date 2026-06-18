@@ -1,4 +1,5 @@
 import { MuteToggle } from '@/components/mute-toggle';
+import { NextTrackButton } from '@/components/next-track-button';
 import { formatNumber } from '@/lib/format-number';
 
 export interface GameHudProps {
@@ -43,7 +44,10 @@ export function GameHud({
       </div>
       <div className="hud__score">Score: {formatNumber(score)}</div>
       <div className="hud__streak">Streak: {streak}</div>
-      <MuteToggle className="hud__mute" />
+      <div className="hud__controls">
+        <NextTrackButton />
+        <MuteToggle />
+      </div>
       {/* a11y: the countdown is a progressbar so assistive tech can announce time left. */}
       {showTimer && (
         <div

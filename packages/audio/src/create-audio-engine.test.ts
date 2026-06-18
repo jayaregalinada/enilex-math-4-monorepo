@@ -67,7 +67,11 @@ function fakeContext(state: AudioContextState = 'suspended'): {
     })),
     createBufferSource: vi.fn(() => fakeBufferSource()),
     decodeAudioData: vi.fn().mockResolvedValue(fakeAudioBuffer),
-    resume: vi.fn().mockResolvedValue(undefined),
+    // Browsers gate audio until resumed; flip to 'running' so the engine's
+    // music-gate (`applyMusic` only plays when not suspended) opens.
+    resume: vi.fn(async () => {
+      context.state = 'running';
+    }),
     close: vi.fn(),
   };
 
@@ -168,13 +172,14 @@ describe('createAudioEngine', () => {
     expect(oscillator.connect).toHaveBeenCalled();
   });
 
-  it('starts and stops music without throwing', () => {
+  it('switches music context and stops without throwing', () => {
     const { context } = fakeContext();
     const engine = createAudioEngine({
       contextFactory: () => context as unknown as AudioContext,
     });
 
-    expect(() => engine.startMusic('easy')).not.toThrow();
+    expect(() => engine.setMusicContext('general')).not.toThrow();
+    expect(() => engine.skipTrack()).not.toThrow();
     expect(() => engine.stopMusic()).not.toThrow();
   });
 
@@ -184,7 +189,8 @@ describe('createAudioEngine', () => {
     await expect(engine.resume()).resolves.toBeUndefined();
     expect(() => engine.setMuted(true)).not.toThrow();
     expect(() => engine.playSoundEffect('tap')).not.toThrow();
-    expect(() => engine.startMusic('easy')).not.toThrow();
+    expect(() => engine.setMusicContext('general')).not.toThrow();
+    expect(() => engine.skipTrack()).not.toThrow();
     expect(() => engine.stopMusic()).not.toThrow();
     expect(() => engine.dispose()).not.toThrow();
   });
@@ -201,64 +207,89 @@ describe('createAudioEngine', () => {
     expect(context.close).toHaveBeenCalledOnce();
   });
 
-  describe('authored music sources', () => {
+  describe('music contexts', () => {
     afterEach(() => {
       vi.unstubAllGlobals();
     });
 
-    // The file path awaits fetch → arrayBuffer → decodeAudioData, all microtasks
-    // (not timers), so a few ticks flush them even under fake timers.
+    // The playlist load path awaits fetch → arrayBuffer → decodeAudioData, all
+    // microtasks (not timers), so a few ticks flush them even under fake timers.
     async function flushMicrotasks(): Promise<void> {
-      for (let i = 0; i < 5; i += 1) {
+      for (let i = 0; i < 8; i += 1) {
         await Promise.resolve();
       }
     }
 
-    function okFetch(): ReturnType<typeof vi.fn> {
-      return vi.fn().mockResolvedValue({
-        ok: true,
-        status: 200,
-        arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(8)),
-      } as unknown as Response);
+    function stubOkFetch(): void {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+          ok: true,
+          status: 200,
+          arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(8)),
+        } as unknown as Response),
+      );
     }
 
-    it('uses the synth path (no buffer source) when a difficulty has no URL', () => {
+    it('plays the playlist (creates a buffer source) when the context has tracks', async () => {
+      stubOkFetch();
       const { context } = fakeContext();
       const engine = createAudioEngine({
         contextFactory: () => context as unknown as AudioContext,
+        playlists: { general: ['/a.mp3'] },
       });
 
-      expect(() => engine.startMusic('easy')).not.toThrow();
-      expect(context.createBufferSource).not.toHaveBeenCalled();
-    });
-
-    it('falls back to the synth (no buffer source) when the file fails to load', async () => {
-      const { context } = fakeContext();
-      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')));
-      const engine = createAudioEngine({
-        contextFactory: () => context as unknown as AudioContext,
-        musicSources: { easy: '/music/easy.mp3' },
-      });
-
-      expect(() => engine.startMusic('easy')).not.toThrow();
-      await flushMicrotasks();
-
-      expect(context.createBufferSource).not.toHaveBeenCalled();
-    });
-
-    it('plays the authored buffer (creates a buffer source) when the file loads', async () => {
-      const { context } = fakeContext();
-      vi.stubGlobal('fetch', okFetch());
-      const engine = createAudioEngine({
-        contextFactory: () => context as unknown as AudioContext,
-        musicSources: { easy: '/music/easy.mp3' },
-      });
-
-      engine.startMusic('easy');
+      // resume() flips the fake context to 'running' so the music gate opens.
+      await engine.resume();
+      engine.setMusicContext('general');
       await flushMicrotasks();
 
       expect(context.decodeAudioData).toHaveBeenCalled();
-      expect(context.createBufferSource).toHaveBeenCalledOnce();
+      expect(context.createBufferSource).toHaveBeenCalled();
+    });
+
+    it('falls back to the synth (no buffer source) when the context has no tracks', async () => {
+      const { context } = fakeContext();
+      const engine = createAudioEngine({
+        contextFactory: () => context as unknown as AudioContext,
+      });
+
+      await engine.resume();
+      engine.setMusicContext('general');
+      await flushMicrotasks();
+
+      expect(context.createBufferSource).not.toHaveBeenCalled();
+    });
+
+    it('does not restart when set to the same context twice', async () => {
+      stubOkFetch();
+      const { context } = fakeContext();
+      const engine = createAudioEngine({
+        contextFactory: () => context as unknown as AudioContext,
+        playlists: { general: ['/a.mp3'] },
+      });
+
+      await engine.resume();
+      engine.setMusicContext('general');
+      await flushMicrotasks();
+      const createdOnce = (context.createBufferSource as ReturnType<typeof vi.fn>).mock.calls
+        .length;
+
+      engine.setMusicContext('general');
+      await flushMicrotasks();
+
+      // Same context is a no-op: no additional source beyond the first track.
+      expect(context.createBufferSource).toHaveBeenCalledTimes(createdOnce);
+    });
+
+    it('skipTrack does not throw', () => {
+      const { context } = fakeContext();
+      const engine = createAudioEngine({
+        contextFactory: () => context as unknown as AudioContext,
+        playlists: { general: ['/a.mp3'] },
+      });
+
+      expect(() => engine.skipTrack()).not.toThrow();
     });
   });
 });

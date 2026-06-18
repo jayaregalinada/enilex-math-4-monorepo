@@ -23,7 +23,7 @@ export function MuteToggle({ className }: MuteToggleProps) {
   return (
     <button
       type="button"
-      className={className === undefined ? 'mute-toggle' : `mute-toggle ${className}`}
+      className={className === undefined ? 'icon-button' : `icon-button ${className}`}
       onClick={handleClick}
       // a11y: an icon-only control needs an explicit label and pressed state.
       aria-pressed={muted}

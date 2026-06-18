@@ -1,3 +1,4 @@
+import type { MusicContext } from '@enilex-math-4-pkg/audio';
 import { useEffect } from 'react';
 import { gameAudio } from '@/lib/game-audio';
 import { reactToSession } from '@/lib/react-to-session';
@@ -6,13 +7,16 @@ import { useSettingsStore } from '@/stores/use-settings-store';
 
 /**
  * Wires the shared audio engine to app state for the app's lifetime: resumes the
- * audio context on the first user gesture, mirrors the muted setting, and plays
- * SFX/music off the game session's transitions. Mount once, near the root.
+ * audio context on the first user gesture, mirrors the muted setting, plays SFX
+ * off the session's transitions, and follows the given music context (the shared
+ * pool for Home/Easy/Normal, the Hard pool during a Hard run). Mount once, near
+ * the root.
  */
-export function useAudio(): void {
+export function useAudio(musicContext: MusicContext): void {
   useEffect(() => {
     // a11y/browser: audio contexts start suspended and may only resume after a
     // real user gesture, so arm a one-shot listener instead of resuming eagerly.
+    // Resuming also kicks off the music that was queued before the gesture.
     function resumeOnGesture(): void {
       void gameAudio.resume();
     }
@@ -36,4 +40,8 @@ export function useAudio(): void {
 
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    gameAudio.setMusicContext(musicContext);
+  }, [musicContext]);
 }

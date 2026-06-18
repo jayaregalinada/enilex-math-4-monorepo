@@ -7,7 +7,8 @@ function fakeEngine() {
     resume: vi.fn(),
     setMuted: vi.fn(),
     playSoundEffect: vi.fn(),
-    startMusic: vi.fn(),
+    setMusicContext: vi.fn(),
+    skipTrack: vi.fn(),
     stopMusic: vi.fn(),
     dispose: vi.fn(),
   };
@@ -52,24 +53,6 @@ function result(overrides: Partial<AnswerResult> = {}): AnswerResult {
 }
 
 describe('reactToSession', () => {
-  it('starts music with the difficulty on a null → active transition', () => {
-    const engine = fakeEngine();
-
-    reactToSession(engine, easyState(), null);
-
-    expect(engine.startMusic).toHaveBeenCalledWith('easy');
-  });
-
-  it('stops music on an active → gameOver transition', () => {
-    const engine = fakeEngine();
-    const previous = easyState();
-    const game: GameState = { ...easyState(), status: 'gameOver', lastResult: previous.lastResult };
-
-    reactToSession(engine, game, previous);
-
-    expect(engine.stopMusic).toHaveBeenCalledOnce();
-  });
-
   it('plays correct for a newly-landed correct answer with a low streak', () => {
     const engine = fakeEngine();
     const previous: GameState = { ...easyState(), status: 'playing' };

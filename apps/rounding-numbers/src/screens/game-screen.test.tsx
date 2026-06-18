@@ -55,7 +55,8 @@ describe('GameScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: '634,600' }));
     expect(screen.getByText('Score: 10')).toBeInTheDocument();
     expect(screen.getByLabelText('5 of 5 lives')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /next/i })).toBeInTheDocument();
+    // Specific name so it doesn't also match the HUD's "Next track" button.
+    expect(screen.getByRole('button', { name: 'Next →' })).toBeInTheDocument();
   });
 
   it('loses a life on a wrong answer', () => {
@@ -67,9 +68,9 @@ describe('GameScreen', () => {
   it('advances to a fresh question on Next', () => {
     renderGame({ initialState: easyState(), onExit: vi.fn(), onQuit: vi.fn() });
     fireEvent.click(screen.getByRole('button', { name: '634,600' }));
-    fireEvent.click(screen.getByRole('button', { name: /next/i }));
-    // Back to playing: the Next button is gone and the prompt is shown again.
-    expect(screen.queryByRole('button', { name: /next/i })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Next →' }));
+    // Back to playing: the advance button is gone and the prompt is shown again.
+    expect(screen.queryByRole('button', { name: 'Next →' })).toBeNull();
     expect(screen.getByText(/to the nearest/)).toBeInTheDocument();
   });
 

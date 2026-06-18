@@ -33,3 +33,11 @@ Thumbs.db
 # Copyrighted source material must not be redistributed (see ADR / CONTRIBUTING).
 *.pdf
 lesson.pdf
+
+# Audio assets are gitignored until each file has a CREDITS.md entry (ADR 0006).
+# Once a track's source + licence are recorded, force-add it (git add -f) — or
+# remove this guard once all committed music is properly credited.
+apps/rounding-numbers/src/assets/music/*.mp3
+apps/rounding-numbers/src/assets/music/*.ogg
+apps/rounding-numbers/src/assets/music/*.m4a
+apps/rounding-numbers/src/assets/music/*.wav

@@ -136,7 +136,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.mute-toggle {
+.icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -146,23 +146,28 @@
   font-size: 1.25rem;
   line-height: 1;
   background: transparent;
-  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.15));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.18));
   border-radius: 999px;
   cursor: pointer;
 }
 
-.mute-toggle:hover {
-  background: var(--color-surface, rgba(0, 0, 0, 0.05));
+.icon-button:hover {
+  background: var(--color-surface, rgba(255, 255, 255, 0.08));
 }
 
-.mute-toggle--corner {
+/* Cluster of audio controls (mute, next track). */
+.screen-controls {
   position: absolute;
   top: 1rem;
   right: 1rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
-.hud__mute {
+.hud__controls {
   margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
 }
 
 /* Mascot ---------------------------------------------------------------- */

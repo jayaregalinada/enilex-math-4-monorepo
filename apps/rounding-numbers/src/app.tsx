@@ -1,7 +1,8 @@
+import type { MusicContext } from '@enilex-math-4-pkg/audio';
 import { ThemeProvider } from '@enilex-math-4-pkg/themes';
 import type { ReactNode } from 'react';
 import { useAudio } from '@/hooks/use-audio';
-import { type GameFlow, useGameFlow } from '@/hooks/use-game-flow';
+import { type FlowState, type GameFlow, useGameFlow } from '@/hooks/use-game-flow';
 import { DifficultyScreen } from '@/screens/difficulty-screen';
 import { GameOverScreen } from '@/screens/game-over-screen';
 import { GameScreen } from '@/screens/game-screen';
@@ -39,10 +40,19 @@ function currentScreen(flow: GameFlow): ReactNode {
   }
 }
 
+/** Hard runs get their own playlist; everything else shares the general pool. */
+function musicContextFor(state: FlowState): MusicContext {
+  if (state.screen === 'game' && state.difficulty === 'hard') {
+    return 'hard';
+  }
+
+  return 'general';
+}
+
 export function App() {
-  useAudio();
   const flow = useGameFlow();
   const theme = useThemeStore((store) => store.theme);
+  useAudio(musicContextFor(flow.state));
 
   return <ThemeProvider theme={theme}>{currentScreen(flow)}</ThemeProvider>;
 }

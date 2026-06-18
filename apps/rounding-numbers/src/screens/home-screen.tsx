@@ -1,3 +1,4 @@
+import { HowToPlayDialog } from '@/components/how-to-play-dialog';
 import { MuteToggle } from '@/components/mute-toggle';
 import { NextTrackButton } from '@/components/next-track-button';
 import { SettingsDialog } from '@/components/settings-dialog';
@@ -7,7 +8,7 @@ export interface HomeScreenProps {
   onLeaderboard: () => void;
 }
 
-/** Landing screen: title, Play, Leaderboard, and the audio/settings controls. */
+/** Landing screen: title, Play, Leaderboard, how-to-play, and the audio/settings controls. */
 export function HomeScreen({ onPlay, onLeaderboard }: HomeScreenProps) {
   return (
     <section className="screen home">
@@ -25,6 +26,7 @@ export function HomeScreen({ onPlay, onLeaderboard }: HomeScreenProps) {
       <button type="button" className="btn btn--ghost" onClick={onLeaderboard}>
         Leaderboard
       </button>
+      <HowToPlayDialog />
     </section>
   );
 }

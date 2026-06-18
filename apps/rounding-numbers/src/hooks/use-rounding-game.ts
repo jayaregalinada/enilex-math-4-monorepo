@@ -12,10 +12,13 @@ export interface RoundingGame {
   remaining: number;
   timerMax: number | null;
   answered: boolean;
+  paused: boolean;
   chosenChoice: Choice | null;
   showExplanation: boolean;
   answer: (value: number) => void;
   next: () => void;
+  pause: () => void;
+  resume: () => void;
 }
 
 /**
@@ -48,7 +51,9 @@ export function useRoundingGame(
   const handleTimeout = useCallback(() => {
     useSessionStore.getState().dispatch({ type: 'timeout' });
   }, []);
-  const remaining = useCountdown(timerMax, state.status === 'playing', handleTimeout);
+  // Reset the clock per question (keyed by place + value), not on pause/resume.
+  const resetKey = `${state.exponent}:${state.question.value}`;
+  const remaining = useCountdown(timerMax, state.status === 'playing', handleTimeout, resetKey);
 
   // Bubble the final score up once the run ends.
   useEffect(() => {
@@ -77,6 +82,12 @@ export function useRoundingGame(
   const next = useCallback(() => {
     useSessionStore.getState().dispatch({ type: 'next' });
   }, []);
+  const pause = useCallback(() => {
+    useSessionStore.getState().dispatch({ type: 'pause' });
+  }, []);
+  const resume = useCallback(() => {
+    useSessionStore.getState().dispatch({ type: 'resume' });
+  }, []);
 
   const chosenValue = state.lastResult?.chosenValue ?? null;
   const chosenChoice =
@@ -88,10 +99,13 @@ export function useRoundingGame(
     remaining,
     timerMax,
     answered,
+    paused: state.status === 'paused',
     chosenChoice,
     // The teaching panel is for the untimed modes; Hard auto-advances instead.
     showExplanation: answered && state.difficulty !== 'hard',
     answer,
     next,
+    pause,
+    resume,
   };
 }

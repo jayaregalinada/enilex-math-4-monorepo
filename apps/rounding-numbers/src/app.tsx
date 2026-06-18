@@ -2,6 +2,7 @@ import type { MusicContext } from '@enilex-math-4-pkg/audio';
 import { ThemeProvider } from '@enilex-math-4-pkg/themes';
 import type { ReactNode } from 'react';
 import { useAudio } from '@/hooks/use-audio';
+import { useCelebration } from '@/hooks/use-celebration';
 import { type FlowState, type GameFlow, useGameFlow } from '@/hooks/use-game-flow';
 import { DifficultyScreen } from '@/screens/difficulty-screen';
 import { GameOverScreen } from '@/screens/game-over-screen';
@@ -58,6 +59,7 @@ export function App() {
   const flow = useGameFlow();
   const theme = useThemeStore((store) => store.theme);
   useAudio(musicContextFor(flow.state));
+  useCelebration();
 
   return <ThemeProvider theme={theme}>{currentScreen(flow)}</ThemeProvider>;
 }

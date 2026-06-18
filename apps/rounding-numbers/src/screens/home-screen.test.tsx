@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // HomeScreen renders SettingsDialog (mute toggle + clear-scores), whose stores
 // persist via localStorage; jsdom here has none, so stub one before they import.
@@ -31,9 +31,16 @@ vi.mock('@/lib/game-audio', () => ({
   },
 }));
 
+const { useSettingsStore } = await import('@/stores/use-settings-store');
 const { HomeScreen } = await import('./home-screen');
 
 describe('HomeScreen', () => {
+  beforeEach(() => {
+    // HowToPlayDialog auto-opens as a modal for first-time players, which would
+    // make the Play/Leaderboard buttons inert; mark it seen so it stays closed.
+    useSettingsStore.setState({ seenHowToPlay: true, muted: false });
+  });
+
   it('plays when the Play button is pressed', () => {
     const onPlay = vi.fn();
     render(<HomeScreen onPlay={onPlay} onLeaderboard={vi.fn()} />);

@@ -32,11 +32,14 @@ vi.mock('@/lib/game-audio', () => ({
 }));
 
 const { useLeaderboardStore } = await import('@/stores/use-leaderboard-store');
+const { useSettingsStore } = await import('@/stores/use-settings-store');
 const { App } = await import('./app');
 
 describe('App', () => {
   beforeEach(() => {
     useLeaderboardStore.setState({ entries: [], lastName: '' });
+    // Keep the onboarding modal closed so it doesn't block navigation.
+    useSettingsStore.setState({ seenHowToPlay: true, muted: false });
   });
 
   it('renders the home screen with the game title', () => {

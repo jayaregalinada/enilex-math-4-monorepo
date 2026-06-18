@@ -2,7 +2,8 @@ import type { GameState } from '@enilex-math-4-pkg/game-core';
 import { THEMES, ThemeProvider } from '@enilex-math-4-pkg/themes';
 import { fireEvent, render, screen } from '@testing-library/react';
 import type { ComponentProps } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useSessionStore } from '@/stores/use-session-store';
 import { GameScreen } from './game-screen';
 
 const [sampleTheme] = THEMES;
@@ -44,6 +45,10 @@ function easyState(): GameState {
 }
 
 describe('GameScreen', () => {
+  beforeEach(() => {
+    useSessionStore.setState({ game: null });
+  });
+
   it('renders the prompt for the current question', () => {
     renderGame({ initialState: easyState(), onExit: vi.fn(), onQuit: vi.fn() });
     expect(screen.getByText(/634,572/)).toBeInTheDocument();
@@ -87,5 +92,11 @@ describe('GameScreen', () => {
     renderGame({ initialState: oneLife, onExit, onQuit: vi.fn() });
     fireEvent.click(screen.getByRole('button', { name: '634,500' })); // wrong → 0 lives
     expect(onExit).toHaveBeenCalledWith(0);
+  });
+
+  it('opens the pause dialog when Pause is pressed', () => {
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onQuit: vi.fn() });
+    fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
+    expect(screen.getByRole('heading', { name: 'Paused' })).toBeInTheDocument();
   });
 });

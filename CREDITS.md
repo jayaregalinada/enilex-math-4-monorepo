@@ -30,9 +30,9 @@ you, not us."*). They are therefore the owner's work, released under this repo's
 
 | File | Pool | Generator | Rights |
 |------|------|-----------|--------|
-| `dark-and-ominus-treblo.mp3` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
-| `level-up-division-treblo.mp3` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
-| `track-2-treblo.mp3` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
+| `dark-and-ominus-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
+| `level-up-division-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
+| `track-2-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
 
 > Treblo's grant applies *"as long as what you put into them is yours"* — the
 > prompts/lyrics fed in are the owner's own, not third-party copyrighted material.
@@ -49,9 +49,9 @@ covers any pool left empty (currently the Hard pool).
 
 | File | Title | Author / Source | Licence | Committable? |
 |------|-------|-----------------|---------|--------------|
-| `retro-funk-fesliyan-studios.mp3` | 8 Bit Retro Funk | David Renda · FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no |
-| `boss-time-feslyan-studios-hard-mode.mp3` | Boss Time | FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no |
-| `retro-platforming-david-fesliyan-hard-mode.mp3` | Retro Platforming | David Fesliyan · FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no |
+| `retro-funk-fesliyan-studios.ogg` | 8 Bit Retro Funk | David Renda · FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no |
+| `boss-time-feslyan-studios-hard-mode.ogg` | Boss Time | FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no |
+| `retro-platforming-david-fesliyan-hard-mode.ogg` | Retro Platforming | David Fesliyan · FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no |
 
 **Thanks** — with appreciation for the music used locally during development:
 **[FesliyanStudios](https://www.fesliyanstudios.com)** (David Renda, David Fesliyan).

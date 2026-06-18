@@ -49,9 +49,9 @@ apps/rounding-numbers/src/assets/music/*.wav
 
 # Cleared tracks — owned, AI-generated with Treblo (see CREDITS.md). Allowed past
 # the guard above so only credited, redistributable files can be committed.
-!apps/rounding-numbers/src/assets/music/level-up-division-treblo.mp3
-!apps/rounding-numbers/src/assets/music/track-2-treblo.mp3
-!apps/rounding-numbers/src/assets/music/dark-and-ominus-treblo.mp3
+!apps/rounding-numbers/src/assets/music/level-up-division-treblo.ogg
+!apps/rounding-numbers/src/assets/music/track-2-treblo.ogg
+!apps/rounding-numbers/src/assets/music/dark-and-ominus-treblo.ogg
 
 # Vendored fonts are gitignored until credited in CREDITS.md (ADR 0007). Once a
 # font's source + licence are recorded, force-add it (git add -f).

@@ -176,8 +176,14 @@ Conventions are gated, not honor-system.
   [ADR 0003](./docs/adr/0003-no-children-pii.md).
 - **No analytics/telemetry** today. If ever added, it must be cookieless,
   anonymous, aggregate-only, with no child profiling and no ads.
-- **No copyrighted third-party assets** (textbook PDFs, art, audio). Game assets
-  are original and generated in-code (CSS/SVG/Web Audio).
+- **No unlicensed third-party assets.** Visual game assets are original and
+  generated in-code (CSS/SVG). **Audio** is synthesized in-code (Web Audio) by
+  default; **audio files** are permitted as an enhancement, but every committed
+  file must be either original work or third-party audio under a licence that
+  **permits redistribution** in this MIT repo. Each file's **source and licence
+  are recorded in `CREDITS.md`** before commit (third-party audio is never
+  credited as original), and music files always have an in-code fallback. See
+  [ADR 0006](./docs/adr/0006-authored-audio-assets.md).
 
 ## Releases & versioning
 

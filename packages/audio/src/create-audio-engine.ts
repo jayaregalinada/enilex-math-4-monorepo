@@ -1,12 +1,20 @@
 import type { Difficulty } from '@enilex-math-4-pkg/game-core';
 import { type AudioContextFactory, createAudioContext } from './create-audio-context';
+import { type BufferMusicPlayer, createBufferMusicPlayer } from './create-buffer-music-player';
 import { createMusicPlayer, type MusicPlayer } from './create-music-player';
+import { loadAudioBuffer } from './load-audio-buffer';
 import { playSoundEffect, type SoundEffectName } from './play-sound-effect';
 
 export interface AudioEngineOptions {
   /** Injectable for tests; defaults to a real browser `AudioContext`. */
   contextFactory?: AudioContextFactory;
   muted?: boolean;
+  /**
+   * Authored background-music URLs per difficulty. When a difficulty has a URL,
+   * the engine plays the file; if it is missing or fails to load, it falls back
+   * to the synthesized tune. Difficulties with no URL always use the synth.
+   */
+  musicSources?: Partial<Record<Difficulty, string>>;
 }
 
 /**
@@ -30,10 +38,15 @@ export interface AudioEngine {
  */
 export function createAudioEngine(options: AudioEngineOptions = {}): AudioEngine {
   const factory = options.contextFactory ?? createAudioContext;
+  const musicSources = options.musicSources ?? {};
+  const bufferCache = new Map<string, AudioBuffer>();
   let context: AudioContext | null = null;
   let masterGain: GainNode | null = null;
-  let musicPlayer: MusicPlayer | null = null;
+  let synthPlayer: MusicPlayer | null = null;
+  let bufferPlayer: BufferMusicPlayer | null = null;
   let muted = options.muted ?? false;
+  // Bumped on every stop/start so a slow file load can tell it has been superseded.
+  let musicGeneration = 0;
 
   function ensureContext(): AudioContext | null {
     if (context !== null) {
@@ -51,7 +64,8 @@ export function createAudioEngine(options: AudioEngineOptions = {}): AudioEngine
 
     context = created;
     masterGain = gain;
-    musicPlayer = createMusicPlayer(created, gain);
+    synthPlayer = createMusicPlayer(created, gain);
+    bufferPlayer = createBufferMusicPlayer(created, gain);
 
     return context;
   }
@@ -84,21 +98,55 @@ export function createAudioEngine(options: AudioEngineOptions = {}): AudioEngine
     playSoundEffect(active, masterGain, name);
   }
 
+  async function playFileOrFallback(
+    active: AudioContext,
+    difficulty: Difficulty,
+    url: string,
+    generation: number,
+  ): Promise<void> {
+    try {
+      const buffer = bufferCache.get(url) ?? (await loadAudioBuffer(active, url));
+      bufferCache.set(url, buffer);
+
+      // Bail if music was stopped or switched while the file was loading.
+      if (generation !== musicGeneration) {
+        return;
+      }
+
+      bufferPlayer?.play(buffer);
+    } catch {
+      if (generation !== musicGeneration) {
+        return;
+      }
+
+      // Authored file missing or unsupported — fall back to the synthesized tune.
+      synthPlayer?.play(difficulty);
+    }
+  }
+
   function startMusic(difficulty: Difficulty): void {
-    ensureContext();
-    if (musicPlayer === null) {
+    const active = ensureContext();
+    if (active === null) {
       return;
     }
 
-    musicPlayer.play(difficulty);
+    stopMusic();
+    const generation = musicGeneration;
+    const url = musicSources[difficulty];
+
+    if (url === undefined) {
+      synthPlayer?.play(difficulty);
+
+      return;
+    }
+
+    void playFileOrFallback(active, difficulty, url, generation);
   }
 
   function stopMusic(): void {
-    if (musicPlayer === null) {
-      return;
-    }
-
-    musicPlayer.stop();
+    musicGeneration += 1;
+    synthPlayer?.stop();
+    bufferPlayer?.stop();
   }
 
   function dispose(): void {
@@ -108,9 +156,11 @@ export function createAudioEngine(options: AudioEngineOptions = {}): AudioEngine
       void context.close();
     }
 
+    bufferCache.clear();
     context = null;
     masterGain = null;
-    musicPlayer = null;
+    synthPlayer = null;
+    bufferPlayer = null;
   }
 
   return {

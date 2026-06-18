@@ -12,8 +12,23 @@ interface FakeContext {
   currentTime: number;
   createGain: ReturnType<typeof vi.fn>;
   createOscillator: ReturnType<typeof vi.fn>;
+  createBufferSource: ReturnType<typeof vi.fn>;
+  decodeAudioData: ReturnType<typeof vi.fn>;
   resume: ReturnType<typeof vi.fn>;
   close: ReturnType<typeof vi.fn>;
+}
+
+const fakeAudioBuffer = { length: 1 } as unknown as AudioBuffer;
+
+function fakeBufferSource() {
+  return {
+    buffer: null as AudioBuffer | null,
+    loop: false,
+    connect: vi.fn(),
+    start: vi.fn(),
+    stop: vi.fn(),
+    disconnect: vi.fn(),
+  };
 }
 
 function fakeParam() {
@@ -50,6 +65,8 @@ function fakeContext(state: AudioContextState = 'suspended'): {
       start: vi.fn(),
       stop: vi.fn(),
     })),
+    createBufferSource: vi.fn(() => fakeBufferSource()),
+    decodeAudioData: vi.fn().mockResolvedValue(fakeAudioBuffer),
     resume: vi.fn().mockResolvedValue(undefined),
     close: vi.fn(),
   };
@@ -182,5 +199,66 @@ describe('createAudioEngine', () => {
     engine.dispose();
 
     expect(context.close).toHaveBeenCalledOnce();
+  });
+
+  describe('authored music sources', () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    // The file path awaits fetch → arrayBuffer → decodeAudioData, all microtasks
+    // (not timers), so a few ticks flush them even under fake timers.
+    async function flushMicrotasks(): Promise<void> {
+      for (let i = 0; i < 5; i += 1) {
+        await Promise.resolve();
+      }
+    }
+
+    function okFetch(): ReturnType<typeof vi.fn> {
+      return vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(8)),
+      } as unknown as Response);
+    }
+
+    it('uses the synth path (no buffer source) when a difficulty has no URL', () => {
+      const { context } = fakeContext();
+      const engine = createAudioEngine({
+        contextFactory: () => context as unknown as AudioContext,
+      });
+
+      expect(() => engine.startMusic('easy')).not.toThrow();
+      expect(context.createBufferSource).not.toHaveBeenCalled();
+    });
+
+    it('falls back to the synth (no buffer source) when the file fails to load', async () => {
+      const { context } = fakeContext();
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')));
+      const engine = createAudioEngine({
+        contextFactory: () => context as unknown as AudioContext,
+        musicSources: { easy: '/music/easy.mp3' },
+      });
+
+      expect(() => engine.startMusic('easy')).not.toThrow();
+      await flushMicrotasks();
+
+      expect(context.createBufferSource).not.toHaveBeenCalled();
+    });
+
+    it('plays the authored buffer (creates a buffer source) when the file loads', async () => {
+      const { context } = fakeContext();
+      vi.stubGlobal('fetch', okFetch());
+      const engine = createAudioEngine({
+        contextFactory: () => context as unknown as AudioContext,
+        musicSources: { easy: '/music/easy.mp3' },
+      });
+
+      engine.startMusic('easy');
+      await flushMicrotasks();
+
+      expect(context.decodeAudioData).toHaveBeenCalled();
+      expect(context.createBufferSource).toHaveBeenCalledOnce();
+    });
   });
 });

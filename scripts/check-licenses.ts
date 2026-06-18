@@ -26,13 +26,17 @@ interface PkgEntry {
 /** Allow an SPDX expression: any-of for OR, all-of for AND. */
 function isAllowed(license: string): boolean {
   const expr = license.replace(/[()]/g, '').trim();
-  if (ALLOWED.has(expr)) return true;
+  if (ALLOWED.has(expr)) {
+    return true;
+  }
   if (/\bOR\b/.test(expr)) {
-    return expr.split(/\s+OR\s+/).some((t) => ALLOWED.has(t.trim()));
+    return expr.split(/\s+OR\s+/).some((token) => ALLOWED.has(token.trim()));
   }
+
   if (/\bAND\b/.test(expr)) {
-    return expr.split(/\s+AND\s+/).every((t) => ALLOWED.has(t.trim()));
+    return expr.split(/\s+AND\s+/).every((token) => ALLOWED.has(token.trim()));
   }
+
   return false;
 }
 
@@ -53,7 +57,9 @@ const data = JSON.parse(raw) as Record<string, PkgEntry[]>;
 const violations: string[] = [];
 
 for (const [license, pkgs] of Object.entries(data)) {
-  if (isAllowed(license)) continue;
+  if (isAllowed(license)) {
+    continue;
+  }
   for (const pkg of pkgs) {
     const version = pkg.version ?? pkg.versions?.join(', ') ?? '?';
     violations.push(`${pkg.name}@${version} — ${license}`);
@@ -64,7 +70,9 @@ if (violations.length > 0) {
   console.error(
     `\n✗ License check failed — non-permissive licenses found (${violations.length}):\n`,
   );
-  for (const v of violations) console.error(`  • ${v}`);
+  for (const v of violations) {
+    console.error(`  • ${v}`);
+  }
   console.error(
     '\nAllowed: ' +
       [...ALLOWED].join(', ') +

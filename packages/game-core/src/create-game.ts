@@ -16,6 +16,7 @@ export function createGame(
 ): GameState {
   const config = DIFFICULTY_CONFIG[difficulty];
   const exponent = difficulty === 'hard' ? nextPlace('hard', startExponent, rng) : startExponent;
+
   return {
     difficulty,
     exponent,

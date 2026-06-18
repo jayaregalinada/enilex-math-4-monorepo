@@ -63,7 +63,37 @@ Hard-to-reverse trade-offs behind them are recorded in [`docs/adr/`](./docs/adr/
   and any stylesheet sit side by side (e.g. `ui/src/answer-button.tsx`,
   `answer-button.test.tsx`, `answer-button.module.css`). Group by feature area,
   not one folder per file.
+- **Utilities live in `lib/`.** Generic helper functions (e.g.
+  `lib/format-number.ts`) go in a dedicated `lib/` folder, not scattered beside
+  components.
+- **Custom hooks live in `hooks/`.** React hooks (e.g. `hooks/use-countdown.ts`,
+  `hooks/use-game-flow.ts`) go in a dedicated `hooks/` folder.
+- **Prefer a reducer or a custom hook over sprawling state.** Avoid accumulating
+  many `useState` calls in one component — model related state with a `useReducer`
+  or extract it into a custom hook (in `hooks/`). Keep view components lean.
 - Each package MAY expose a single `index.ts` barrel as its public API.
+
+## Control flow, naming & accessibility
+
+- **Braces always.** Every `if`/`else`/`for`/`while` body uses `{ }`, even
+  one-liners. Enforced by Biome (`useBlockStatements`).
+- **Prefer guard clauses over `else`.** Avoid `else` / `else if`; return early
+  instead. Only use `else` / `else if` when the branches are genuinely mutually
+  exclusive and equally weighted (no early exit applies) — and add a short comment
+  explaining why `else` is the clearer choice there.
+- **Avoid nested `if`.** Flatten with early returns or a combined condition. Only
+  nest when the inner check is meaningfully dependent on the outer one and cannot
+  be combined — and add a short comment explaining the dependency.
+- **Blank line before a trailing `return`.** When a `return` follows other
+  statements in a block, separate it with a blank line.
+- **Blank line between `switch` cases.** After each case's `return` / `break`,
+  leave a blank line before the next `case`.
+- **Descriptive names.** No arbitrary single letters or heavy abbreviations for
+  variables and parameters (`n`, `p`, `lo`); use intention-revealing names
+  (`value`, `placeValue`, `low`). Conventional loop counters (`i`) are fine.
+- **Note accessibility.** Where an element needs ARIA roles/labels or other
+  accessibility handling, add a brief `// a11y:` comment explaining it so the
+  intent isn't lost in a later refactor.
 
 ## Tests
 

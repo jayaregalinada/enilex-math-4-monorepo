@@ -41,9 +41,9 @@ export type GameAction =
   | { type: 'resume' }
   | { type: 'quit' };
 
-function resolveAnswer(state: GameState, value: number | null, missed: boolean): GameState {
+function resolveAnswer(state: GameState, chosenValue: number | null, missed: boolean): GameState {
   const config = DIFFICULTY_CONFIG[state.difficulty];
-  const isCorrect = !missed && value === state.question.correct;
+  const isCorrect = !missed && chosenValue === state.question.correct;
 
   if (isCorrect) {
     const streakAfter = state.streak + 1;
@@ -54,6 +54,7 @@ function resolveAnswer(state: GameState, value: number | null, missed: boolean):
       streakAfter % config.regainEvery === 0 &&
       state.lives < state.maxLives;
     const lives = lifeGained ? state.lives + 1 : state.lives;
+
     return {
       ...state,
       lives,
@@ -62,7 +63,7 @@ function resolveAnswer(state: GameState, value: number | null, missed: boolean):
       status: 'answered',
       lastResult: {
         correct: true,
-        chosenValue: value,
+        chosenValue,
         correctValue: state.question.correct,
         missed: false,
         gained,
@@ -74,6 +75,7 @@ function resolveAnswer(state: GameState, value: number | null, missed: boolean):
   }
 
   const lives = state.lives - 1;
+
   return {
     ...state,
     lives,
@@ -81,7 +83,7 @@ function resolveAnswer(state: GameState, value: number | null, missed: boolean):
     status: lives <= 0 ? 'gameOver' : 'answered',
     lastResult: {
       correct: false,
-      chosenValue: value,
+      chosenValue,
       correctValue: state.question.correct,
       missed,
       gained: 0,
@@ -100,13 +102,22 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'answer':
       return state.status === 'playing' ? resolveAnswer(state, action.value, false) : state;
+
     case 'timeout':
       return state.status === 'playing' ? resolveAnswer(state, null, true) : state;
+
     case 'next': {
-      if (state.status !== 'answered') return state;
-      if (state.lives <= 0) return { ...state, status: 'gameOver' };
+      if (state.status !== 'answered') {
+        return state;
+      }
+
+      if (state.lives <= 0) {
+        return { ...state, status: 'gameOver' };
+      }
+
       const rng = action.rng ?? Math.random;
       const exponent = nextPlace(state.difficulty, state.exponent, rng);
+
       return {
         ...state,
         exponent,
@@ -115,12 +126,16 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         lastResult: null,
       };
     }
+
     case 'pause':
       return state.status === 'playing' ? { ...state, status: 'paused' } : state;
+
     case 'resume':
       return state.status === 'paused' ? { ...state, status: 'playing' } : state;
+
     case 'quit':
       return { ...state, status: 'gameOver' };
+
     default:
       return state;
   }

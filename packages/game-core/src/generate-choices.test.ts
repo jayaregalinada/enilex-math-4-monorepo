@@ -33,7 +33,9 @@ describe('generateChoices', () => {
 
       // No distractor equals the correct answer.
       for (const c of choices) {
-        if (c.kind !== 'correct') expect(c.value).not.toBe(correct);
+        if (c.kind !== 'correct') {
+          expect(c.value).not.toBe(correct);
+        }
       }
     }
   });

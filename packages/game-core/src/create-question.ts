@@ -7,7 +7,7 @@ import { roundTo } from './round-to';
 
 /** A single round: the number, the target place, the correct answer, and the options. */
 export interface Question {
-  n: number;
+  value: number;
   exponent: number;
   correct: number;
   choices: Choice[];
@@ -19,11 +19,12 @@ export function createQuestion(
   exponent: number,
   rng: Rng = Math.random,
 ): Question {
-  const n = generateNumber(exponent, difficulty, rng);
+  const value = generateNumber(exponent, difficulty, rng);
+
   return {
-    n,
+    value,
     exponent,
-    correct: roundTo(n, exponent).rounded,
-    choices: generateChoices(n, exponent, rng),
+    correct: roundTo(value, exponent).rounded,
+    choices: generateChoices(value, exponent, rng),
   };
 }

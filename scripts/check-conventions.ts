@@ -25,12 +25,19 @@ function toKebab(name: string): string {
 }
 
 function walk(dir: string, acc: string[]): string[] {
-  if (!existsSync(dir)) return acc;
+  if (!existsSync(dir)) {
+    return acc;
+  }
   for (const entry of readdirSync(dir)) {
-    if (SKIP_DIRS.has(entry)) continue;
+    if (SKIP_DIRS.has(entry)) {
+      continue;
+    }
     const full = join(dir, entry);
-    if (statSync(full).isDirectory()) walk(full, acc);
-    else if (/\.tsx?$/.test(entry)) acc.push(full);
+    if (statSync(full).isDirectory()) {
+      walk(full, acc);
+    } else if (/\.tsx?$/.test(entry)) {
+      acc.push(full);
+    }
   }
   return acc;
 }
@@ -58,7 +65,7 @@ interface ValueExport {
 function hasExportModifier(node: ts.Node): boolean {
   return (
     ts.canHaveModifiers(node) &&
-    (ts.getModifiers(node) ?? []).some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
+    (ts.getModifiers(node) ?? []).some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword)
   );
 }
 
@@ -73,7 +80,9 @@ function collectValueExports(file: string): ValueExport[] {
   const exports: ValueExport[] = [];
 
   source.forEachChild((node) => {
-    if (!hasExportModifier(node)) return;
+    if (!hasExportModifier(node)) {
+      return;
+    }
 
     if (ts.isFunctionDeclaration(node) && node.name) {
       exports.push({ name: node.name.text, needsTest: true });
@@ -83,7 +92,9 @@ function collectValueExports(file: string): ValueExport[] {
       exports.push({ name: node.name.text, needsTest: false });
     } else if (ts.isVariableStatement(node)) {
       for (const decl of node.declarationList.declarations) {
-        if (!ts.isIdentifier(decl.name)) continue;
+        if (!ts.isIdentifier(decl.name)) {
+          continue;
+        }
         const init = decl.initializer;
         const isCallable = !!init && (ts.isArrowFunction(init) || ts.isFunctionExpression(init));
         exports.push({ name: decl.name.text, needsTest: isCallable });
@@ -98,23 +109,29 @@ const errors: string[] = [];
 
 for (const root of ROOTS) {
   for (const file of walk(root, [])) {
-    if (isExempt(file)) continue;
+    if (isExempt(file)) {
+      continue;
+    }
 
     const valueExports = collectValueExports(file);
-    if (valueExports.length === 0) continue; // type-only / side-effect module
+    if (valueExports.length === 0) {
+      continue; // type-only / side-effect module
+    }
 
     const rel = file;
     if (valueExports.length > 1) {
       errors.push(
         `${rel}: ${valueExports.length} value exports (${valueExports
-          .map((e) => e.name)
+          .map((valueExport) => valueExport.name)
           .join(', ')}) — exactly one is allowed.`,
       );
       continue;
     }
 
     const only = valueExports[0];
-    if (!only) continue;
+    if (!only) {
+      continue;
+    }
     const stem = basename(file).replace(/\.tsx?$/, '');
     const expected = toKebab(only.name);
     if (stem !== expected) {
@@ -138,7 +155,9 @@ for (const root of ROOTS) {
 
 if (errors.length > 0) {
   console.error(`\n✗ Convention check failed (${errors.length}):\n`);
-  for (const e of errors) console.error(`  • ${e}`);
+  for (const message of errors) {
+    console.error(`  • ${message}`);
+  }
   console.error('');
   process.exit(1);
 }

@@ -37,7 +37,9 @@ describe('generateNumber', () => {
       const r = roundTo(n, 3);
       // No cascade: a target digit of 9 never rounds up on Easy.
       expect(r.roundedUp && r.targetDigit === 9).toBe(false);
-      if (r.lookDigit === 5) boundary++;
+      if (r.lookDigit === 5) {
+        boundary++;
+      }
     }
     expect(boundary / SAMPLES).toBeLessThan(0.2);
   });
@@ -46,7 +48,9 @@ describe('generateNumber', () => {
     const rng = mulberry32(3);
     let boundary = 0;
     for (let i = 0; i < SAMPLES; i++) {
-      if (roundTo(generateNumber(3, 'normal', rng), 3).lookDigit === 5) boundary++;
+      if (roundTo(generateNumber(3, 'normal', rng), 3).lookDigit === 5) {
+        boundary++;
+      }
     }
     expect(boundary).toBeGreaterThan(0);
   });
@@ -57,7 +61,9 @@ describe('generateNumber', () => {
     for (let i = 0; i < SAMPLES; i++) {
       const n = generateNumber(3, 'hard', rng);
       const r = roundTo(n, 3);
-      if (r.roundedUp && r.targetDigit === 9) cascades++;
+      if (r.roundedUp && r.targetDigit === 9) {
+        cascades++;
+      }
     }
     expect(cascades).toBeGreaterThan(0);
   });

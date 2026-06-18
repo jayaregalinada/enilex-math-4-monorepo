@@ -11,11 +11,17 @@ const MAX_EXPONENT = 8;
  * - **Hard** — a uniformly random place each question.
  */
 export function nextPlace(difficulty: Difficulty, current: number, rng: Rng = Math.random): number {
-  if (difficulty === 'easy') return current;
+  if (difficulty === 'easy') {
+    return current;
+  }
+
   if (difficulty === 'hard') {
     return MIN_EXPONENT + Math.floor(rng() * (MAX_EXPONENT - MIN_EXPONENT + 1));
   }
+
+  // Normal: a ±1 step that bounces back inward at either end of the ladder.
   const step = rng() < 0.5 ? -1 : 1;
   const next = current + step;
+
   return next < MIN_EXPONENT || next > MAX_EXPONENT ? current - step : next;
 }

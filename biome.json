@@ -29,6 +29,7 @@
       "preset": "recommended",
       "style": {
         "noDefaultExport": "error",
+        "useBlockStatements": "error",
         "useFilenamingConvention": {
           "level": "error",
           "options": {

@@ -29,7 +29,7 @@ function baseState(overrides: Partial<GameState> = {}): GameState {
     score: 0,
     streak: 0,
     status: 'playing',
-    question: { n: 634_572, exponent: 2, correct: 634_600, choices: CHOICES },
+    question: { value: 634_572, exponent: 2, correct: 634_600, choices: CHOICES },
     lastResult: null,
     ...overrides,
   };

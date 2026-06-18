@@ -17,7 +17,7 @@ describe('createQuestion', () => {
     const rng = mulberry32(11);
     for (let i = 0; i < 200; i++) {
       const q = createQuestion('normal', 1 + (i % 8), rng);
-      expect(q.correct).toBe(roundTo(q.n, q.exponent).rounded);
+      expect(q.correct).toBe(roundTo(q.value, q.exponent).rounded);
       expect(q.choices).toHaveLength(4);
       expect(q.choices.map((c) => c.value)).toContain(q.correct);
     }

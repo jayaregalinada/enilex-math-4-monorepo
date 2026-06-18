@@ -1,6 +1,6 @@
 import type { GameState } from '@enilex-math-4-pkg/game-core';
 import { THEMES, ThemeProvider } from '@enilex-math-4-pkg/themes';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSessionStore } from '@/stores/use-session-store';
@@ -77,7 +77,11 @@ describe('GameScreen', () => {
   it('scores a correct answer and reveals the Next button (Easy)', () => {
     renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
     fireEvent.click(screen.getByRole('button', { name: '634,600' }));
-    expect(screen.getByText('Score: 10')).toBeInTheDocument();
+    // Arcade HUD: a correct answer scores +10, shown zero-padded under the Score label.
+    // The Hi readout mirrors the same value while the run leads, so scope to the Score stat.
+    const scoreStat = screen.getByText('Score').closest('.hud__stat');
+    expect(scoreStat).not.toBeNull();
+    expect(within(scoreStat as HTMLElement).getByText('000010')).toBeInTheDocument();
     expect(screen.getByLabelText('5 of 5 lives')).toBeInTheDocument();
     // Specific name so it doesn't also match the HUD's "Next track" button.
     expect(screen.getByRole('button', { name: 'Next →' })).toBeInTheDocument();

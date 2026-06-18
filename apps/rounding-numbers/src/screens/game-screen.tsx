@@ -7,6 +7,7 @@ import { GetReadyOverlay } from '@/components/get-ready-overlay';
 import { PauseMenu } from '@/components/pause-menu';
 import { useRoundingGame } from '@/hooks/use-rounding-game';
 import { formatNumber } from '@/lib/format-number';
+import { useLeaderboardStore } from '@/stores/use-leaderboard-store';
 
 export interface GameScreenProps {
   initialState: GameState;
@@ -59,6 +60,10 @@ export function GameScreen({ initialState, onExit, onRestart, onQuit }: GameScre
   const game = useRoundingGame(initialState, onExit);
   const { state } = game;
   const chosenValue = game.chosenChoice?.value ?? null;
+  // HI-SCORE = best score on record across all boards.
+  const hiScore = useLeaderboardStore((store) =>
+    store.entries.reduce((best, entry) => Math.max(best, entry.score), 0),
+  );
 
   return (
     <section className="screen game">
@@ -67,6 +72,7 @@ export function GameScreen({ initialState, onExit, onRestart, onQuit }: GameScre
         maxLives={state.maxLives}
         score={state.score}
         streak={state.streak}
+        hiScore={hiScore}
         {...(game.timerMax !== null ? { remaining: game.remaining, timerMax: game.timerMax } : {})}
       />
 

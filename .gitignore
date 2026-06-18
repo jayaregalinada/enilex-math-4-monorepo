@@ -46,3 +46,8 @@ apps/rounding-numbers/src/assets/music/*.mp3
 apps/rounding-numbers/src/assets/music/*.ogg
 apps/rounding-numbers/src/assets/music/*.m4a
 apps/rounding-numbers/src/assets/music/*.wav
+
+# Cleared tracks — owned, AI-generated with Treblo (see CREDITS.md). Allowed past
+# the guard above so only credited, redistributable files can be committed.
+!apps/rounding-numbers/src/assets/music/level-up-division-treblo.mp3
+!apps/rounding-numbers/src/assets/music/track-2-treblo.mp3

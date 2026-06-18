@@ -103,6 +103,12 @@ Presentational, theme-aware, no game logic:
 `AnswerButton` (green-pop / red-shake states), `NumberLine` (animated endpoints +
 tick), `LivesBar`, `ScoreBadge`, `StreakMeter`, `TimerBar`, `Modal`, `Card`.
 
+Stateful, accessibility-heavy widgets (`Modal`, leaderboard `Tabs`, mute
+`Toggle`, confirm dialogs) are thin themed wrappers over **Radix Primitives**,
+styled with our own CSS variables — see
+[ADR 0004](../../../docs/adr/0004-radix-primitives-for-ui.md). Bespoke pieces
+(`NumberLine`, `AnswerButton`, HUD) stay hand-built. Radix first lands at M6–M7.
+
 ---
 
 ## 3. App screens (`apps/rounding-numbers`)
@@ -115,7 +121,8 @@ Difficulty → (PlaceValuePicker) → Game → GameOver → Leaderboard`, plus o
   the question + 4 answer buttons, and — on Easy/Normal after answering — the
   **Explanation panel** (digit-highlighted number + rule + number line + Next).
   Hard auto-advances (~1.5s correct / ~2s wrong/missed).
-- **Leaderboard** = `localStorage` repo (key `enilex-math-4:rounding-numbers:leaderboard`):
+- **Leaderboard** = `localStorage` repo (key `enilex-math-4:rounding-numbers:leaderboard`),
+  via a Zustand `persist` store ([ADR 0005](../../../docs/adr/0005-zustand-app-state.md)):
   four tabs (Easy/Normal/Hard top-10 by points + Overall by weighted points).
 - **Settings**: mute toggle, Clear scores (confirm-gated).
 - **Name entry**: prompted at every game-over, prefilled with last-used name.

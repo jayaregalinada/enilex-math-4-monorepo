@@ -1,0 +1,31 @@
+version: 2
+updates:
+  # JavaScript/TypeScript dependencies across the pnpm workspace.
+  - package-ecosystem: npm
+    directories:
+      - "/"
+      - "/apps/*"
+      - "/packages/*"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      # Group all routine version bumps into a single PR to reduce noise.
+      dependencies:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: chore
+      include: scope
+
+  # Keep GitHub Actions pinned versions fresh and patched.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: chore

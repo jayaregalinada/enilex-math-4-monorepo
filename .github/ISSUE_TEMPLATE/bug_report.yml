@@ -1,0 +1,53 @@
+name: 🐛 Bug report
+description: Report something that isn't working as expected.
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please do **not** include any
+        secrets, passwords, or personal information (yours or a child's) in this
+        report.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug and what you expected instead.
+      placeholder: When I ... I expected ... but instead ...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce it?
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. See error
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: Which app/package?
+      placeholder: apps/rounding-numbers
+    validations:
+      required: false
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser/OS/device, and Node version if relevant.
+      placeholder: "Chrome 120 on iPad / Node 22"
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmations
+      options:
+        - label: I searched existing issues and this isn't a duplicate.
+          required: true
+        - label: This report contains no secrets or personal/child information.
+          required: true

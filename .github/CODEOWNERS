@@ -1,0 +1,4 @@
+# Default code owner for the whole repo.
+# Combined with branch protection, this makes @jayaregalinada a required
+# reviewer on pull requests from outside contributors.
+* @jayaregalinada

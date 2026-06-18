@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔒 Report a security vulnerability
+    url: https://github.com/jayaregalinada/enilex-math-4-monorepo/security/advisories/new
+    about: Report security issues privately via GitHub. Do NOT open a public issue.
+  - name: 🤝 Report a Code of Conduct concern
+    url: https://github.com/jayaregalinada/enilex-math-4-monorepo/security/advisories/new
+    about: Report conduct concerns privately through the same private channel.
+  - name: 💬 Questions & ideas
+    url: https://github.com/jayaregalinada/enilex-math-4-monorepo/discussions
+    about: Ask questions or discuss ideas in Discussions.

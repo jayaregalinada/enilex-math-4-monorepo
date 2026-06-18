@@ -66,3 +66,7 @@ sans-serif). No bundled font files — nothing to credit.
 Third-party dependencies are tracked in `package.json` / `pnpm-lock.yaml` and
 their licences are covered by the dependency-licence CI gate. List here only any
 vendored code that falls outside that gate (none at present).
+
+## Others
+
+Music by <a href="https://pixabay.com/users/reganati-46795721/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=527182">Reganati</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=527182">Pixabay</a>

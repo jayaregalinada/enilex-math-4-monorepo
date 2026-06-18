@@ -11,14 +11,14 @@
   padding: 2.5rem 2rem;
   text-align: center;
   background: var(--color-surface);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 1.5rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hard);
 }
 
 .app__eyebrow {
   margin: 0 0 0.25rem;
-  font-size: 0.85rem;
+  font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -27,8 +27,8 @@
 
 .app__title {
   margin: 0;
-  font-size: 2.25rem;
-  line-height: 1.1;
+  font-size: 1.5rem;
+  line-height: 1.3;
 }
 
 .app__subtitle {

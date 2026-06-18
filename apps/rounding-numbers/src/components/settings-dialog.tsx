@@ -1,3 +1,4 @@
+import { IconSettings } from '@enilex-math-4-pkg/ui';
 import * as Dialog from '@radix-ui/react-dialog';
 import { ClearScoresButton } from '@/components/clear-scores-button';
 import { MuteToggle } from '@/components/mute-toggle';
@@ -12,7 +13,7 @@ export function SettingsDialog() {
       <Dialog.Trigger asChild>
         {/* a11y: icon-only trigger needs an explicit label. */}
         <button type="button" className="icon-button" aria-label="Settings">
-          <span aria-hidden="true">⚙️</span>
+          <IconSettings />
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>

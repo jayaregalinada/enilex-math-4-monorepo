@@ -31,4 +31,13 @@ describe('NextTrackButton', () => {
     expect(gameAudio.skipTrack).toHaveBeenCalledOnce();
     expect(gameAudio.playSoundEffect).toHaveBeenCalledWith('tap');
   });
+
+  it('renders an SVG icon inside the button', () => {
+    render(<NextTrackButton />);
+
+    // a11y: the icon-only control swaps emoji for a pixel-art SVG; verify it renders.
+    expect(
+      screen.getByRole('button', { name: 'Next track' }).querySelector('svg'),
+    ).toBeInTheDocument();
+  });
 });

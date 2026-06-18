@@ -1,3 +1,4 @@
+import { IconSoundOff, IconSoundOn } from '@enilex-math-4-pkg/ui';
 import { gameAudio } from '@/lib/game-audio';
 import { useSettingsStore } from '@/stores/use-settings-store';
 
@@ -29,7 +30,7 @@ export function MuteToggle({ className }: MuteToggleProps) {
       aria-pressed={muted}
       aria-label={muted ? 'Unmute sound' : 'Mute sound'}
     >
-      <span aria-hidden="true">{muted ? '🔇' : '🔊'}</span>
+      {muted ? <IconSoundOff /> : <IconSoundOn />}
     </button>
   );
 }

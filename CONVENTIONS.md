@@ -104,6 +104,10 @@ Hard-to-reverse trade-offs behind them are recorded in [`docs/adr/`](./docs/adr/
 - **Exempt:** `index.ts` barrels, `*.config.*`, type-only files (pure
   interfaces/`*.types.ts`), app entry (`main.tsx`), and pure constant tables.
 - Runner: **Vitest** (+ React Testing Library for components).
+- **End-to-end:** Playwright smoke specs live in `<app>/e2e/*.spec.ts` (outside
+  `src`, so the convention checker and Vitest ignore them). Run with
+  `pnpm --filter <app> test:e2e` after `pnpm exec playwright install chromium`;
+  CI runs them against the built app.
 
 ## Package naming
 

@@ -14,5 +14,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test-setup.ts'],
     css: false,
+    // Unit tests are co-located under src; Playwright e2e specs live in e2e/.
+    include: ['src/**/*.test.{ts,tsx}'],
   },
 });

@@ -91,3 +91,39 @@ jobs:
       - name: Build
         if: steps.detect.outputs.ready == 'true'
         run: pnpm build
+
+  # End-to-end smoke test (Playwright) against the built app.
+  e2e:
+    name: E2E smoke (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Detect workspace
+        id: detect
+        run: |
+          if [ -f apps/rounding-numbers/playwright.config.ts ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "No Playwright config yet — skipping e2e until M8 lands."
+          fi
+      - name: Enable Corepack
+        if: steps.detect.outputs.ready == 'true'
+        run: corepack enable
+      - uses: actions/setup-node@v6
+        if: steps.detect.outputs.ready == 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install
+        if: steps.detect.outputs.ready == 'true'
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        if: steps.detect.outputs.ready == 'true'
+        run: pnpm build
+      - name: Install Playwright browser
+        if: steps.detect.outputs.ready == 'true'
+        run: pnpm --filter @enilex-math-4/rounding-numbers exec playwright install --with-deps chromium
+      - name: Run smoke test
+        if: steps.detect.outputs.ready == 'true'
+        run: pnpm --filter @enilex-math-4/rounding-numbers test:e2e

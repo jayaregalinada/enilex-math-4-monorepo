@@ -23,3 +23,14 @@ body {
   color: var(--color-text);
   background: radial-gradient(circle at top, var(--color-bg-accent), var(--color-bg));
 }
+
+/* a11y: a clearly visible keyboard focus ring on every interactive element. */
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Keyboard focus only — don't ring on mouse/touch press. */
+:focus:not(:focus-visible) {
+  outline: none;
+}

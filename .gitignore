@@ -51,3 +51,4 @@ apps/rounding-numbers/src/assets/music/*.wav
 # the guard above so only credited, redistributable files can be committed.
 !apps/rounding-numbers/src/assets/music/level-up-division-treblo.mp3
 !apps/rounding-numbers/src/assets/music/track-2-treblo.mp3
+!apps/rounding-numbers/src/assets/music/dark-and-ominus-treblo.mp3

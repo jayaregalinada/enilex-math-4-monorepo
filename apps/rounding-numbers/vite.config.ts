@@ -12,8 +12,9 @@ export default defineConfig({
       // PWA dev mode disabled — the SW intercepts HMR and breaks the dev loop.
       devOptions: { enabled: false },
       workbox: {
-        // Cache all app assets; 6 MB ceiling covers the woff2 font and ogg tracks.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,ogg}'],
+        // Cache all app assets; 6 MB ceiling covers the woff2 font and audio.
+        // ogg for most browsers, m4a for iOS Safari (which can't decode ogg).
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,ogg,m4a}'],
         maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         cleanupOutdatedCaches: true,
       },

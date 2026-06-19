@@ -4,13 +4,19 @@ import { createMusicPlayer, type MusicPlayer } from './create-music-player';
 import { createPlaylistPlayer, type PlaylistPlayer } from './create-playlist-player';
 import { playSoundEffect, type SoundEffectName } from './play-sound-effect';
 
-/** Which playlist is playing: the shared Home/Easy/Normal pool, or Hard's own. */
-export type MusicContext = 'general' | 'hard';
+/**
+ * Which playlist is playing: the shared Home/Easy/Normal pool, Hard's own, or the
+ * game-over screen's. `gameOver` has no synth fallback — until a `-game-over` file
+ * is added it stays silent, so the loss screen isn't scored by an upbeat tune.
+ */
+export type MusicContext = 'general' | 'hard' | 'gameOver';
 
 export interface AudioEngineOptions {
   /** Injectable for tests; defaults to a real browser `AudioContext`. */
   contextFactory?: AudioContextFactory;
   muted?: boolean;
+  /** Master playback volume, 0–1. Defaults to 1 (full). Muting overrides it to 0. */
+  volume?: number;
   /**
    * Background-music file URLs per context. When a context has tracks, the
    * engine shuffles and plays them; otherwise it falls back to the synthesized
@@ -27,6 +33,8 @@ export interface AudioEngine {
   /** Resume the context after a user gesture (browsers start it suspended). */
   resume: () => Promise<void>;
   setMuted: (muted: boolean) => void;
+  /** Set master volume, 0–1. Takes effect immediately unless muted. */
+  setVolume: (volume: number) => void;
   playSoundEffect: (name: SoundEffectName) => void;
   /** Switch the background playlist. Same context twice is a no-op (keeps playing). */
   setMusicContext: (context: MusicContext) => void;
@@ -34,6 +42,11 @@ export interface AudioEngine {
   skipTrack: () => void;
   stopMusic: () => void;
   dispose: () => void;
+}
+
+/** Clamp a volume into the 0–1 range. */
+function clampVolume(volume: number): number {
+  return Math.min(1, Math.max(0, volume));
 }
 
 /** The synth tune to fall back to when a context has no files. */
@@ -58,8 +71,14 @@ export function createAudioEngine(options: AudioEngineOptions = {}): AudioEngine
   let synthPlayer: MusicPlayer | null = null;
   let playlistPlayer: PlaylistPlayer | null = null;
   let muted = options.muted ?? false;
+  let volume = clampVolume(options.volume ?? 1);
   let desiredContext: MusicContext | null = null;
   let playingContext: MusicContext | null = null;
+
+  /** The master gain to apply, folding mute into the volume. */
+  function effectiveGain(): number {
+    return muted ? 0 : volume;
+  }
 
   function ensureContext(): AudioContext | null {
     if (context !== null) {
@@ -72,7 +91,7 @@ export function createAudioEngine(options: AudioEngineOptions = {}): AudioEngine
     }
 
     const gain = created.createGain();
-    gain.gain.value = muted ? 0 : 1;
+    gain.gain.value = effectiveGain();
     gain.connect(created.destination);
 
     context = created;
@@ -107,9 +126,12 @@ export function createAudioEngine(options: AudioEngineOptions = {}): AudioEngine
     playlistPlayer?.stop();
 
     if (tracks.length > 0) {
-      playlistPlayer?.setPlaylist(tracks);
+      // The game-over jingle plays once; every other context loops its playlist.
+      playlistPlayer?.setPlaylist(tracks, { loop: desiredContext !== 'gameOver' });
       playlistPlayer?.play();
-    } else {
+    } else if (desiredContext !== 'gameOver') {
+      // Every context but game-over loops a synth tune when it has no files.
+      // Game-over stays silent until a dedicated `-game-over` track is added.
       synthPlayer?.play(fallbackDifficulty(desiredContext));
     }
 
@@ -133,7 +155,15 @@ export function createAudioEngine(options: AudioEngineOptions = {}): AudioEngine
     muted = next;
 
     if (masterGain !== null) {
-      masterGain.gain.value = next ? 0 : 1;
+      masterGain.gain.value = effectiveGain();
+    }
+  }
+
+  function setVolume(next: number): void {
+    volume = clampVolume(next);
+
+    if (masterGain !== null) {
+      masterGain.gain.value = effectiveGain();
     }
   }
 
@@ -179,6 +209,7 @@ export function createAudioEngine(options: AudioEngineOptions = {}): AudioEngine
   return {
     resume,
     setMuted,
+    setVolume,
     playSoundEffect: playEffect,
     setMusicContext,
     skipTrack,

@@ -143,6 +143,52 @@ describe('createAudioEngine', () => {
     expect(masterGain.gain.value).toBe(1);
   });
 
+  it('applies volume to the master gain, with mute overriding it', async () => {
+    const { context, masterGain } = fakeContext();
+    const engine = createAudioEngine({
+      contextFactory: () => context as unknown as AudioContext,
+    });
+
+    await engine.resume();
+
+    engine.setVolume(0.5);
+    expect(masterGain.gain.value).toBe(0.5);
+
+    // Muting forces 0 regardless of volume; unmuting restores the set volume.
+    engine.setMuted(true);
+    expect(masterGain.gain.value).toBe(0);
+
+    engine.setMuted(false);
+    expect(masterGain.gain.value).toBe(0.5);
+  });
+
+  it('clamps volume into 0–1', async () => {
+    const { context, masterGain } = fakeContext();
+    const engine = createAudioEngine({
+      contextFactory: () => context as unknown as AudioContext,
+    });
+
+    await engine.resume();
+
+    engine.setVolume(5);
+    expect(masterGain.gain.value).toBe(1);
+
+    engine.setVolume(-1);
+    expect(masterGain.gain.value).toBe(0);
+  });
+
+  it('starts the lazily-created gain at the constructed volume', async () => {
+    const { context, masterGain } = fakeContext();
+    const engine = createAudioEngine({
+      contextFactory: () => context as unknown as AudioContext,
+      volume: 0.3,
+    });
+
+    await engine.resume();
+
+    expect(masterGain.gain.value).toBe(0.3);
+  });
+
   it('starts the lazily-created gain muted when constructed with muted: true', async () => {
     const { context, masterGain } = fakeContext();
     const engine = createAudioEngine({
@@ -188,6 +234,7 @@ describe('createAudioEngine', () => {
 
     await expect(engine.resume()).resolves.toBeUndefined();
     expect(() => engine.setMuted(true)).not.toThrow();
+    expect(() => engine.setVolume(0.5)).not.toThrow();
     expect(() => engine.playSoundEffect('tap')).not.toThrow();
     expect(() => engine.setMusicContext('general')).not.toThrow();
     expect(() => engine.skipTrack()).not.toThrow();
@@ -259,6 +306,39 @@ describe('createAudioEngine', () => {
       await flushMicrotasks();
 
       expect(context.createBufferSource).not.toHaveBeenCalled();
+    });
+
+    it('stays silent on game-over with no tracks — no playlist and no synth fallback', async () => {
+      const { context } = fakeContext();
+      const engine = createAudioEngine({
+        contextFactory: () => context as unknown as AudioContext,
+      });
+
+      await engine.resume();
+      // createOscillator may run during resume's synth setup for other contexts;
+      // clear it so we only measure what game-over triggers.
+      (context.createOscillator as ReturnType<typeof vi.fn>).mockClear();
+      engine.setMusicContext('gameOver');
+      await flushMicrotasks();
+
+      // Empty game-over pool: neither a file (buffer source) nor the synth (oscillator).
+      expect(context.createBufferSource).not.toHaveBeenCalled();
+      expect(context.createOscillator).not.toHaveBeenCalled();
+    });
+
+    it('plays the game-over track when its pool has files', async () => {
+      stubOkFetch();
+      const { context } = fakeContext();
+      const engine = createAudioEngine({
+        contextFactory: () => context as unknown as AudioContext,
+        playlists: { gameOver: ['/sad.mp3'] },
+      });
+
+      await engine.resume();
+      engine.setMusicContext('gameOver');
+      await flushMicrotasks();
+
+      expect(context.createBufferSource).toHaveBeenCalled();
     });
 
     it('does not restart when set to the same context twice', async () => {

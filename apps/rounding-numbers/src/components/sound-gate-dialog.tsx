@@ -20,14 +20,16 @@ export function SoundGateDialog() {
   function choose(soundOn: boolean) {
     setMuted(!soundOn);
     markSoundReady();
-    // The choice is the browser audio-unlock gesture; resume so music can start.
-    void gameAudio.resume();
-
-    if (soundOn) {
-      gameAudio.playSoundEffect('tap');
-    }
-
     setOpen(false);
+    // The choice is the browser audio-unlock gesture; resume so music can start,
+    // then play the confirmation tap only once the context is actually running —
+    // iOS drops anything scheduled while the context is still suspended, which
+    // would otherwise swallow this first effect.
+    void gameAudio.resume().then(() => {
+      if (soundOn) {
+        gameAudio.playSoundEffect('tap');
+      }
+    });
   }
 
   return (

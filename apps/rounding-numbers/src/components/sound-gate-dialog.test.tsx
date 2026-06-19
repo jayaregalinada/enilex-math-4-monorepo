@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // The settings store persists via localStorage, captured when its module is
@@ -22,7 +22,7 @@ vi.hoisted(() => {
 
 vi.mock('@/lib/game-audio', () => ({
   gameAudio: {
-    resume: vi.fn(),
+    resume: vi.fn().mockResolvedValue(undefined),
     setMuted: vi.fn(),
     playSoundEffect: vi.fn(),
     startMusic: vi.fn(),
@@ -49,16 +49,17 @@ describe('SoundGateDialog', () => {
     expect(screen.getByRole('button', { name: 'No' })).toBeInTheDocument();
   });
 
-  it('turns sound on, plays a tap, and closes on Yes', () => {
+  it('turns sound on, plays a tap, and closes on Yes', async () => {
     render(<SoundGateDialog />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Yes' }));
 
     expect(useSettingsStore.getState().muted).toBe(false);
     expect(useSettingsStore.getState().soundReady).toBe(true);
-    expect(gameAudio.playSoundEffect).toHaveBeenCalledWith('tap');
     // The choice dismisses the gate, so the Yes button is gone.
     expect(screen.queryByRole('button', { name: 'Yes' })).toBeNull();
+    // The tap plays after the context resumes (a microtask later).
+    await waitFor(() => expect(gameAudio.playSoundEffect).toHaveBeenCalledWith('tap'));
   });
 
   it('mutes and marks sound readied on No', () => {

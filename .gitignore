@@ -56,6 +56,13 @@ apps/rounding-numbers/src/assets/music/*.wav
 !apps/rounding-numbers/src/assets/music/kawaii-treblo.ogg
 !apps/rounding-numbers/src/assets/music/level-up-division-treblo.ogg
 !apps/rounding-numbers/src/assets/music/track-2-treblo.ogg
+# AAC/M4A siblings of the owned Treblo tracks (for Safari/iOS, which can't decode
+# OGG Vorbis). Same licence as the OGGs above, so likewise committable:
+!apps/rounding-numbers/src/assets/music/chill-track-2-treblo.m4a
+!apps/rounding-numbers/src/assets/music/dark-and-ominus-treblo-hard-mode.m4a
+!apps/rounding-numbers/src/assets/music/kawaii-treblo.m4a
+!apps/rounding-numbers/src/assets/music/level-up-division-treblo.m4a
+!apps/rounding-numbers/src/assets/music/track-2-treblo.m4a
 
 # Vendored fonts are gitignored until credited in CREDITS.md (ADR 0007). Once a
 # font's source + licence are recorded, force-add it (git add -f).

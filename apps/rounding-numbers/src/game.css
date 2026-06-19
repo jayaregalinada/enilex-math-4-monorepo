@@ -666,6 +666,14 @@
   color: var(--color-muted);
 }
 
+.number-line__label {
+  /* Endpoint numbers can be long (e.g. rounding to hundred-thousands). Keep each
+   * on one line and let it shrink to fit the panel, otherwise the two labels make
+   * the number line wider than the screen and bleed into a horizontal scroll. */
+  font-size: clamp(0.58rem, 2.6vw, 1rem);
+  white-space: nowrap;
+}
+
 .number-line__label.is-answer {
   color: var(--color-accent);
   font-weight: 700;
@@ -725,6 +733,15 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: min(26rem, calc(100vw - 2rem));
+  /* Never taller than the viewport, and scroll the body when it would be —
+   * otherwise tall content (or short/landscape screens) gets clipped off the
+   * top and bottom with no way to reach it. dvh tracks mobile browser chrome;
+   * vh is the fallback for browsers without dvh. */
+  max-height: calc(100vh - 2rem);
+  /* biome-ignore lint/suspicious/noDuplicateProperties: intentional vh fallback for the dvh override below */
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 1.5rem;
   background: var(--color-bg-accent);
   color: var(--color-text);
@@ -834,8 +851,13 @@
 
 .leaderboard__tab {
   flex: 1;
+  /* min-width:0 lets the four tabs share the row and shrink on narrow screens;
+   * the fluid size keeps each label on one line instead of forcing the whole
+   * page into a horizontal scroll. Capped at 1rem so wider screens are unchanged. */
+  min-width: 0;
   padding: 0.5rem 0.25rem;
   font: inherit;
+  font-size: clamp(0.7rem, 3.2vw, 1rem);
   font-weight: 600;
   color: var(--color-muted);
   background: transparent;
@@ -929,5 +951,35 @@
   .mascot {
     width: 2.75rem;
     height: 2.75rem;
+  }
+
+  /* Shrink the game-over score so the whole screen — now that the leaderboard
+   * sits on its own row below "Play again" — stays reachable on short viewports. */
+  .game-over__score {
+    font-size: 1.4rem;
+  }
+
+  /* Tighten dialogs so they take less vertical room before they need to scroll. */
+  .dialog__content {
+    padding: 1rem;
+  }
+
+  .dialog__description {
+    margin-bottom: 0.75rem;
+  }
+
+  .dialog__actions {
+    margin-top: 0.75rem;
+  }
+}
+
+/* Very small phones: the longest answers (9-digit numbers, e.g. when rounding to
+ * hundred thousands) overflow the fixed two-column track because the fluid size
+ * bottoms out at its 0.8rem floor. Lower the floor and trim the side padding on
+ * narrow viewports so they stay inside the button. */
+@media (max-width: 23.5rem) {
+  .answer {
+    padding-inline: 0.4rem;
+    font-size: clamp(0.6rem, 2.9vw, 0.85rem);
   }
 }

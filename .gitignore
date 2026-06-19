@@ -52,7 +52,7 @@ apps/rounding-numbers/src/assets/music/*.wav
 # FesliyanStudios, Suno (free tier), and Pixabay/Reganati tracks stay ignored:
 # their licences forbid redistributing the raw file (see CREDITS.md).
 !apps/rounding-numbers/src/assets/music/chill-track-2-treblo.ogg
-!apps/rounding-numbers/src/assets/music/dark-and-ominus-treblo.ogg
+!apps/rounding-numbers/src/assets/music/dark-and-ominus-treblo-hard-mode.ogg
 !apps/rounding-numbers/src/assets/music/kawaii-treblo.ogg
 !apps/rounding-numbers/src/assets/music/level-up-division-treblo.ogg
 !apps/rounding-numbers/src/assets/music/track-2-treblo.ogg

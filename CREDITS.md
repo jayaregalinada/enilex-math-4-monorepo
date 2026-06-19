@@ -31,7 +31,7 @@ you, not us."*). They are therefore the owner's work, released under this repo's
 | File | Pool | Generator | Rights |
 |------|------|-----------|--------|
 | `chill-track-2-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
-| `dark-and-ominus-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
+| `dark-and-ominus-treblo-hard-mode.ogg` | hard | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
 | `kawaii-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
 | `level-up-division-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
 | `track-2-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |

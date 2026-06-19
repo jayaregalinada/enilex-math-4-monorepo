@@ -544,8 +544,10 @@
   gap: 0.75rem;
   text-align: center;
   background: rgba(0, 0, 0, 0.55);
+  /* Only the standard property: the build's Lightning CSS adds the -webkit-
+   * prefix. Authoring both makes it drop the unprefixed one, killing the blur
+   * in browsers that need it (e.g. current Chrome). */
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 .get-ready__label {
@@ -702,9 +704,11 @@
    * now establish a stacking context for the FX background. */
   z-index: 100;
   background: rgba(0, 0, 0, 0.55);
-  /* Every popup blurs the board behind it; the pause variant blurs harder. */
+  /* Every popup blurs the board behind it; the pause variant blurs harder.
+   * Standard property only — the build's Lightning CSS emits the -webkit- prefix.
+   * Authoring both makes it keep only the prefixed one, so the blur vanishes in
+   * browsers that need the unprefixed property (e.g. current Chrome). */
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   animation: dialog-fade 150ms ease-out;
 }
 
@@ -712,7 +716,6 @@
 .dialog__overlay--blur {
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
 }
 
 .dialog__content {

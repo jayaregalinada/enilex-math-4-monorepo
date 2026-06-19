@@ -40,8 +40,13 @@ Key forks and what was chosen (alternatives in parentheses):
   (Resume / Restart / Sound / Quit), and every screen gets a consistent Back/Home
   affordance.
 - **Game-feel FX:** arcade HUD (SCORE / HI-SCORE / pixel-heart lives / combo),
-  CRT-scanline overlay, pixel-wipe screen transitions, and an animated tiled pixel
-  background.
+  CRT-scanline overlay, pixel-wipe screen transitions, a **per-theme** animated
+  pixel background (each palette gets its own motif), and the active theme's mascot
+  as a "hero" character on Home.
+- **Popups pause the run** behind a blurred, dimmed backdrop: opening any in-game
+  dialog (Settings or the Pause Menu) freezes the countdown and disables answering
+  until it closes — menu visibility is decoupled from paused state so Settings
+  pauses without summoning the Pause Menu.
 
 ## Decision
 

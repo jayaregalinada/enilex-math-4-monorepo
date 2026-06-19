@@ -5,13 +5,18 @@ import { EffectsToggle } from '@/components/effects-toggle';
 import { MuteToggle } from '@/components/mute-toggle';
 import { VolumeSlider } from '@/components/volume-slider';
 
+export interface SettingsDialogProps {
+  /** Notified when the dialog opens/closes so a parent can pause the run while open. */
+  onOpenChange?: (open: boolean) => void;
+}
+
 /**
  * Settings overlay: sound on/off and clear-scores. Opened from a gear button.
  * Radix Dialog handles focus-trap/Escape/ARIA (ADR 0004); styling is our own CSS.
  */
-export function SettingsDialog() {
+export function SettingsDialog({ onOpenChange }: SettingsDialogProps = {}) {
   return (
-    <Dialog.Root>
+    <Dialog.Root {...(onOpenChange ? { onOpenChange } : {})}>
       <Dialog.Trigger asChild>
         {/* a11y: icon-only trigger needs an explicit label. */}
         <button type="button" className="icon-button" aria-label="Settings">

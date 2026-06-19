@@ -1,3 +1,4 @@
+import { Mascot } from '@enilex-math-4-pkg/themes';
 import { HowToPlayDialog } from '@/components/how-to-play-dialog';
 import { SoundGateDialog } from '@/components/sound-gate-dialog';
 
@@ -6,10 +7,13 @@ export interface HomeScreenProps {
   onLeaderboard: () => void;
 }
 
-/** Landing screen: title, Play, Leaderboard, how-to-play. Audio/settings live in the app shell. */
+/** Landing screen: the theme's mascot hero, title, Play, Leaderboard, how-to-play. */
 export function HomeScreen({ onPlay, onLeaderboard }: HomeScreenProps) {
   return (
     <section className="screen home">
+      <div className="home__mascot">
+        <Mascot mood="idle" />
+      </div>
       <p className="screen__eyebrow">Enilex Math 4</p>
       <h1 className="screen__title">Rounding Numbers</h1>
       <p className="screen__subtitle">Round whole numbers to the nearest place value.</p>

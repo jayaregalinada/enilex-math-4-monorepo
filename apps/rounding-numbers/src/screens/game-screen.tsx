@@ -1,11 +1,16 @@
 import { type GameState, PLACES } from '@enilex-math-4-pkg/game-core';
 import { Mascot, type MascotMood } from '@enilex-math-4-pkg/themes';
+import { IconPause } from '@enilex-math-4-pkg/ui';
+import { useState } from 'react';
 import { AnswerButton, type AnswerState } from '@/components/answer-button';
 import { ExplanationPanel } from '@/components/explanation-panel';
 import { GameHud } from '@/components/game-hud';
 import { GetReadyOverlay } from '@/components/get-ready-overlay';
+import { MuteToggle } from '@/components/mute-toggle';
+import { NextTrackButton } from '@/components/next-track-button';
 import { NumberDisplay } from '@/components/number-display';
 import { PauseMenu } from '@/components/pause-menu';
+import { SettingsDialog } from '@/components/settings-dialog';
 import { useRoundingGame } from '@/hooks/use-rounding-game';
 import { formatNumber } from '@/lib/format-number';
 import { useLeaderboardStore } from '@/stores/use-leaderboard-store';
@@ -60,6 +65,9 @@ function answerStateFor(
 export function GameScreen({ initialState, onExit, onRestart, onQuit }: GameScreenProps) {
   const game = useRoundingGame(initialState, onExit);
   const { state } = game;
+  // Which menu (if any) is open. Decoupled from the paused STATUS so opening
+  // Settings can pause the run without summoning the Pause menu.
+  const [openMenu, setOpenMenu] = useState<'none' | 'pause' | 'settings'>('none');
   const chosenValue = game.chosenChoice?.value ?? null;
   // HI-SCORE = best score on record across all boards.
   const hiScore = useLeaderboardStore((store) =>
@@ -68,6 +76,35 @@ export function GameScreen({ initialState, onExit, onRestart, onQuit }: GameScre
 
   return (
     <section className="screen game">
+      {/* In-game top-right cluster (the app-level one is hidden during play): audio,
+          Settings (pauses the run while open), and Pause. */}
+      <div className="screen-controls">
+        <NextTrackButton />
+        <MuteToggle />
+        <SettingsDialog
+          onOpenChange={(open) => {
+            if (open) {
+              setOpenMenu('settings');
+              game.pause();
+            } else {
+              setOpenMenu('none');
+              game.resume();
+            }
+          }}
+        />
+        <button
+          type="button"
+          className="icon-button"
+          aria-label="Pause"
+          onClick={() => {
+            setOpenMenu('pause');
+            game.pause();
+          }}
+        >
+          <IconPause />
+        </button>
+      </div>
+
       <GameHud
         lives={state.lives}
         maxLives={state.maxLives}
@@ -121,11 +158,15 @@ export function GameScreen({ initialState, onExit, onRestart, onQuit }: GameScre
         </button>
       )}
 
-      <button type="button" className="btn btn--ghost game__quit" onClick={game.pause}>
-        Pause
-      </button>
-
-      <PauseMenu open={game.paused} onResume={game.resume} onRestart={onRestart} onQuit={onQuit} />
+      <PauseMenu
+        open={openMenu === 'pause'}
+        onResume={() => {
+          setOpenMenu('none');
+          game.resume();
+        }}
+        onRestart={onRestart}
+        onQuit={onQuit}
+      />
 
       {game.getReadyCount !== null && <GetReadyOverlay count={game.getReadyCount} />}
     </section>

@@ -1,0 +1,48 @@
+# Once this file exists, the Vercel CLI ignores .gitignore entirely (only
+# Vercel's built-in defaults like node_modules/.git always apply), so the
+# build/test/secret junk is re-listed below.
+#
+# Deliberately NOT listed: apps/rounding-numbers/src/assets/music/*.ogg and
+# public/fonts/. The third-party tracks (FesliyanStudios, Suno, Reganati) are
+# gitignored because their licences forbid redistributing the raw file in this
+# public MIT repo, but they may be *used* in the app with attribution (see
+# CREDITS.md). Leaving them out of this ignore list lets a CLI deploy upload
+# them to the build without committing/redistributing them in Git.
+#
+# NOTE: Git-integration deploys (push to main) build only committed files, so
+# they will NOT include these tracks — re-run `vercel deploy --prod` after a
+# push if you want them in production.
+
+# Dependencies
+node_modules
+
+# Build output
+dist
+build
+out
+*.tsbuildinfo
+
+# Turborepo
+.turbo
+
+# Test / coverage
+coverage
+test-results
+playwright-report
+playwright/.cache
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Copyrighted source material (never ship)
+*.pdf
+lesson.pdf
+
+# Logs / OS / editor
+*.log
+.DS_Store
+
+# Harness state
+.claude

@@ -24,7 +24,7 @@ const { HowToPlayDialog } = await import('./how-to-play-dialog');
 
 describe('HowToPlayDialog', () => {
   beforeEach(() => {
-    useSettingsStore.setState({ seenHowToPlay: false, seenSoundPrompt: true, muted: false });
+    useSettingsStore.setState({ seenHowToPlay: false, soundReady: true, muted: false });
   });
 
   it('auto-opens for a first-time player and marks it seen on dismiss', () => {
@@ -39,7 +39,7 @@ describe('HowToPlayDialog', () => {
   });
 
   it('does not auto-open while the sound gate is unanswered', () => {
-    useSettingsStore.setState({ seenSoundPrompt: false });
+    useSettingsStore.setState({ soundReady: false });
     render(<HowToPlayDialog />);
 
     expect(screen.queryByRole('heading', { name: 'How to play' })).toBeNull();

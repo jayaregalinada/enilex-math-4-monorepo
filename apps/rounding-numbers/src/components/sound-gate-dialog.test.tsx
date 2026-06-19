@@ -37,11 +37,11 @@ const { SoundGateDialog } = await import('./sound-gate-dialog');
 
 describe('SoundGateDialog', () => {
   beforeEach(() => {
-    useSettingsStore.setState({ seenSoundPrompt: false, muted: false });
+    useSettingsStore.setState({ soundReady: false, muted: false });
     vi.clearAllMocks();
   });
 
-  it('opens the gate with Yes/No when the prompt has not been seen', () => {
+  it('opens the gate with Yes/No on a fresh load (sound not yet readied)', () => {
     render(<SoundGateDialog />);
 
     expect(screen.getByText('Turn on sound?')).toBeInTheDocument();
@@ -55,23 +55,24 @@ describe('SoundGateDialog', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Yes' }));
 
     expect(useSettingsStore.getState().muted).toBe(false);
+    expect(useSettingsStore.getState().soundReady).toBe(true);
     expect(gameAudio.playSoundEffect).toHaveBeenCalledWith('tap');
     // The choice dismisses the gate, so the Yes button is gone.
     expect(screen.queryByRole('button', { name: 'Yes' })).toBeNull();
   });
 
-  it('mutes and marks the prompt seen on No', () => {
+  it('mutes and marks sound readied on No', () => {
     render(<SoundGateDialog />);
 
     fireEvent.click(screen.getByRole('button', { name: 'No' }));
 
     expect(useSettingsStore.getState().muted).toBe(true);
-    expect(useSettingsStore.getState().seenSoundPrompt).toBe(true);
+    expect(useSettingsStore.getState().soundReady).toBe(true);
     expect(gameAudio.playSoundEffect).not.toHaveBeenCalled();
   });
 
-  it('does not render once the prompt has already been seen', () => {
-    useSettingsStore.setState({ seenSoundPrompt: true });
+  it('stays closed once sound has been readied this session', () => {
+    useSettingsStore.setState({ soundReady: true });
 
     render(<SoundGateDialog />);
 

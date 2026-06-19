@@ -3,6 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { ClearScoresButton } from '@/components/clear-scores-button';
 import { EffectsToggle } from '@/components/effects-toggle';
 import { MuteToggle } from '@/components/mute-toggle';
+import { VolumeSlider } from '@/components/volume-slider';
 
 /**
  * Settings overlay: sound on/off and clear-scores. Opened from a gear button.
@@ -28,6 +29,10 @@ export function SettingsDialog() {
             <div className="settings__row">
               <span>Sound</span>
               <MuteToggle />
+            </div>
+            <div className="settings__row">
+              <span>Volume</span>
+              <VolumeSlider />
             </div>
             <div className="settings__row">
               <span>Reduce effects</span>

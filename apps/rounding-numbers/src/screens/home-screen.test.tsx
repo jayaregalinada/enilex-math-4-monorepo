@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// HomeScreen renders SettingsDialog (mute toggle + clear-scores), whose stores
-// persist via localStorage; jsdom here has none, so stub one before they import.
+// HomeScreen renders the sound-gate and how-to-play dialogs, whose settings store
+// persists via localStorage; jsdom here has none, so stub one before they import.
 vi.hoisted(() => {
   const storage = new Map<string, string>();
   vi.stubGlobal('localStorage', {
@@ -39,7 +39,7 @@ describe('HomeScreen', () => {
     // The sound gate and HowToPlayDialog auto-open as modals for first-time
     // players, which would make the Play/Leaderboard buttons inert; answer the
     // sound gate (seenSoundPrompt) and mark how-to-play seen so both stay closed.
-    useSettingsStore.setState({ seenHowToPlay: true, seenSoundPrompt: true, muted: false });
+    useSettingsStore.setState({ seenHowToPlay: true, soundReady: true, muted: false });
   });
 
   it('plays when the Play button is pressed', () => {

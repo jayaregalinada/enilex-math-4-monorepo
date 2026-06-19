@@ -6,6 +6,7 @@ function fakeEngine() {
   return {
     resume: vi.fn(),
     setMuted: vi.fn(),
+    setVolume: vi.fn(),
     playSoundEffect: vi.fn(),
     setMusicContext: vi.fn(),
     skipTrack: vi.fn(),

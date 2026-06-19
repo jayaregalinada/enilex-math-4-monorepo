@@ -23,21 +23,37 @@ const { useSettingsStore } = await import('./use-settings-store');
 
 describe('useSettingsStore', () => {
   beforeEach(() => {
-    useSettingsStore.setState({ muted: false, seenSoundPrompt: false, reduceEffects: false });
+    useSettingsStore.setState({
+      muted: false,
+      volume: 0.8,
+      soundReady: false,
+      reduceEffects: false,
+    });
   });
 
   it('defaults muted to false', () => {
     expect(useSettingsStore.getState().muted).toBe(false);
   });
 
-  it('defaults seenSoundPrompt and reduceEffects to false', () => {
-    expect(useSettingsStore.getState().seenSoundPrompt).toBe(false);
+  it('defaults soundReady and reduceEffects to false', () => {
+    expect(useSettingsStore.getState().soundReady).toBe(false);
     expect(useSettingsStore.getState().reduceEffects).toBe(false);
   });
 
-  it('markSoundPromptSeen sets seenSoundPrompt to true', () => {
-    useSettingsStore.getState().markSoundPromptSeen();
-    expect(useSettingsStore.getState().seenSoundPrompt).toBe(true);
+  it('markSoundReady sets soundReady to true', () => {
+    useSettingsStore.getState().markSoundReady();
+    expect(useSettingsStore.getState().soundReady).toBe(true);
+  });
+
+  it('setVolume sets and clamps the volume into 0–1', () => {
+    useSettingsStore.getState().setVolume(0.5);
+    expect(useSettingsStore.getState().volume).toBe(0.5);
+
+    useSettingsStore.getState().setVolume(2);
+    expect(useSettingsStore.getState().volume).toBe(1);
+
+    useSettingsStore.getState().setVolume(-1);
+    expect(useSettingsStore.getState().volume).toBe(0);
   });
 
   it('setReduceEffects sets the reduceEffects flag directly', () => {

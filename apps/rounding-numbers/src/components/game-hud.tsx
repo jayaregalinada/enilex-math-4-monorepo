@@ -1,6 +1,4 @@
 import { IconHeart } from '@enilex-math-4-pkg/ui';
-import { MuteToggle } from '@/components/mute-toggle';
-import { NextTrackButton } from '@/components/next-track-button';
 
 export interface GameHudProps {
   lives: number;
@@ -68,10 +66,6 @@ export function GameHud({
           {streak >= COMBO_THRESHOLD ? ' COMBO!' : ''}
         </div>
       )}
-      <div className="hud__controls">
-        <NextTrackButton />
-        <MuteToggle />
-      </div>
       {/* a11y: the countdown is a progressbar so assistive tech can announce time left. */}
       {showTimer && (
         <div

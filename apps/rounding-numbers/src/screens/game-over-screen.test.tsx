@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// GameOverScreen auto-opens a NameEntryDialog reading the persisted leaderboard
+// GameOverScreen renders an inline NameEntryForm reading the persisted leaderboard
 // store; jsdom here has no localStorage, so stub one before that module imports.
 vi.hoisted(() => {
   const storage = new Map<string, string>();
@@ -27,7 +27,7 @@ describe('GameOverScreen', () => {
     useLeaderboardStore.setState({ entries: [], lastName: '' });
   });
 
-  it('shows the final score and replay actions', () => {
+  it('shows the final score, an inline save form, and replay actions', () => {
     const onPlayAgain = vi.fn();
     const onHome = vi.fn();
     render(
@@ -39,15 +39,34 @@ describe('GameOverScreen', () => {
         onHome={onHome}
       />,
     );
-    // The bare score appears on the screen (the dialog text is "1,250 points on hard").
     expect(screen.getByText('1,250')).toBeInTheDocument();
-    // The name-entry dialog is modal and opens by default; dismiss it so the
-    // screen's own buttons are accessible again (not behind aria-hidden).
-    fireEvent.click(screen.getByRole('button', { name: 'Skip' }));
+    // The save form is inline (no modal), so the nickname field and replay
+    // buttons are all live on the page at once.
+    expect(screen.getByLabelText('Nickname')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /play again/i }));
     fireEvent.click(screen.getByRole('button', { name: /home/i }));
     expect(onPlayAgain).toHaveBeenCalledOnce();
     expect(onHome).toHaveBeenCalledOnce();
+  });
+
+  it('saves the score to the leaderboard from the inline form', () => {
+    render(
+      <GameOverScreen
+        score={1_250}
+        difficulty="hard"
+        onPlayAgain={vi.fn()}
+        onLeaderboard={vi.fn()}
+        onHome={vi.fn()}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText('Nickname'), { target: { value: 'Nova' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    const entries = useLeaderboardStore.getState().entries;
+    expect(entries).toHaveLength(1);
+    expect(entries[0]?.name).toBe('Nova');
+    expect(screen.getByText('Saved to the leaderboard.')).toBeInTheDocument();
   });
 
   it('opens the leaderboard when the Leaderboard button is pressed', () => {
@@ -61,8 +80,6 @@ describe('GameOverScreen', () => {
         onHome={vi.fn()}
       />,
     );
-    // Dismiss the modal name-entry dialog first so the screen buttons are live.
-    fireEvent.click(screen.getByRole('button', { name: 'Skip' }));
     fireEvent.click(screen.getByRole('button', { name: 'Leaderboard' }));
     expect(onLeaderboard).toHaveBeenCalledOnce();
   });

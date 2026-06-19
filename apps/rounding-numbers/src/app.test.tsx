@@ -23,6 +23,7 @@ vi.mock('@/lib/game-audio', () => ({
   gameAudio: {
     resume: vi.fn(),
     setMuted: vi.fn(),
+    setVolume: vi.fn(),
     playSoundEffect: vi.fn(),
     setMusicContext: vi.fn(),
     skipTrack: vi.fn(),
@@ -40,7 +41,7 @@ describe('App', () => {
     useLeaderboardStore.setState({ entries: [], lastName: '' });
     // Keep the onboarding modals closed so they don't block navigation: answer the
     // sound gate (seenSoundPrompt) and mark how-to-play seen.
-    useSettingsStore.setState({ seenHowToPlay: true, seenSoundPrompt: true, muted: false });
+    useSettingsStore.setState({ seenHowToPlay: true, soundReady: true, muted: false });
   });
 
   it('renders the home screen with the game title', () => {

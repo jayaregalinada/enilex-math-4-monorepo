@@ -4,6 +4,7 @@ import { AnswerButton, type AnswerState } from '@/components/answer-button';
 import { ExplanationPanel } from '@/components/explanation-panel';
 import { GameHud } from '@/components/game-hud';
 import { GetReadyOverlay } from '@/components/get-ready-overlay';
+import { NumberDisplay } from '@/components/number-display';
 import { PauseMenu } from '@/components/pause-menu';
 import { useRoundingGame } from '@/hooks/use-rounding-game';
 import { formatNumber } from '@/lib/format-number';
@@ -79,8 +80,19 @@ export function GameScreen({ initialState, onExit, onRestart, onQuit }: GameScre
       <Mascot mood={mascotMood(state)} />
 
       <p className="game__prompt">
-        Round <strong>{formatNumber(state.question.value)}</strong> to the nearest{' '}
-        <strong>{placeLabel(state.question.exponent)}</strong>.
+        Round{' '}
+        {state.difficulty === 'easy' ? (
+          // Easy mode highlights the target place digit right in the prompt.
+          <NumberDisplay
+            value={state.question.value}
+            exponent={state.question.exponent}
+            showLook={false}
+            label={formatNumber(state.question.value)}
+          />
+        ) : (
+          <strong>{formatNumber(state.question.value)}</strong>
+        )}{' '}
+        to the nearest <strong>{placeLabel(state.question.exponent)}</strong>.
       </p>
 
       <div className="answer-grid">

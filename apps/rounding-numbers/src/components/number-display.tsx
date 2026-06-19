@@ -4,6 +4,14 @@ import { formatNumber } from '@/lib/format-number';
 export interface NumberDisplayProps {
   value: number;
   exponent: number;
+  /**
+   * Also highlight the "look" digit (the one to the right that the rounding rule
+   * inspects). On by default for the teaching panel; turn off for a plain prompt
+   * highlight that only marks the target place.
+   */
+  showLook?: boolean;
+  /** Override the accessible label (defaults to a "…rounding to the nearest…" phrase). */
+  label?: string;
 }
 
 type DigitKind = 'normal' | 'target' | 'look';
@@ -30,11 +38,12 @@ function digitKind(index: number, targetIndex: number, lookIndex: number): Digit
   return 'normal';
 }
 
-function buildTokens(value: number, exponent: number): Token[] {
+function buildTokens(value: number, exponent: number, showLook: boolean): Token[] {
   const digits = value.toString().split('');
   const length = digits.length;
   const targetIndex = length - 1 - exponent;
-  const lookIndex = length - exponent;
+  // -1 disables the look highlight (no index can match) when not wanted.
+  const lookIndex = showLook ? length - exponent : -1;
   const tokens: Token[] = [];
 
   for (let index = 0; index < length; index++) {
@@ -58,15 +67,17 @@ function buildTokens(value: number, exponent: number): Token[] {
  * The number with comma grouping, highlighting the target-place digit (bold +
  * underline) and the look digit (the one the rule inspects).
  */
-export function NumberDisplay({ value, exponent }: NumberDisplayProps) {
-  const tokens = buildTokens(value, exponent);
+export function NumberDisplay({ value, exponent, showLook = true, label }: NumberDisplayProps) {
+  const tokens = buildTokens(value, exponent, showLook);
 
   return (
     // a11y: highlighting is visual, so the whole number is exposed as one label.
     <span
       className="number-display"
       role="img"
-      aria-label={`${formatNumber(value)}, rounding to the nearest ${placeLabel(exponent)}`}
+      aria-label={
+        label ?? `${formatNumber(value)}, rounding to the nearest ${placeLabel(exponent)}`
+      }
     >
       <span aria-hidden="true">
         {tokens.map((token) =>

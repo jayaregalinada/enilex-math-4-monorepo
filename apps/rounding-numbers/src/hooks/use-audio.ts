@@ -34,6 +34,13 @@ export function useAudio(musicContext: MusicContext): void {
   }, []);
 
   useEffect(() => {
+    gameAudio.setVolume(useSettingsStore.getState().volume);
+    const unsubscribe = useSettingsStore.subscribe((state) => gameAudio.setVolume(state.volume));
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = useSessionStore.subscribe((state, previous) => {
       reactToSession(gameAudio, state.game, previous.game);
     });

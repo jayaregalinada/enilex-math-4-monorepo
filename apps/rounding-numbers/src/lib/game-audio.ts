@@ -8,5 +8,9 @@ import { MUSIC_LIBRARY } from '@/lib/music-library';
  * playlists (general vs Hard), falling back to synthesized tunes when empty.
  */
 export const gameAudio = createAudioEngine({
-  playlists: { general: MUSIC_LIBRARY.general, hard: MUSIC_LIBRARY.hard },
+  playlists: {
+    general: MUSIC_LIBRARY.general,
+    hard: MUSIC_LIBRARY.hard,
+    gameOver: MUSIC_LIBRARY.gameOver,
+  },
 });

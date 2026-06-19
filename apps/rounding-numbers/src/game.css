@@ -6,7 +6,10 @@
   gap: 1rem;
   width: min(40rem, 100%);
   margin: 0 auto;
-  padding: 2rem 1.25rem;
+  /* Extra top padding reserves room for the fixed top-left nav and top-right
+   * audio/settings controls, so screen content never tucks under them on narrow
+   * viewports (where the screen spans the full width). */
+  padding: 4rem 1.25rem 2rem;
   text-align: center;
   /* Stepped timing gives a choppy, retro screen-in instead of a smooth fade. */
   animation: screen-in 0.28s steps(5, end);
@@ -77,6 +80,17 @@
   background: transparent;
 }
 
+/* Size modifiers: --lg headlines the primary action, --sm de-emphasises secondary ones. */
+.btn--lg {
+  padding: 1.1rem 2.4rem;
+  font-size: 1.05rem;
+}
+
+.btn--sm {
+  padding: 0.6rem 1.15rem;
+  font-size: 0.7rem;
+}
+
 .btn:disabled {
   cursor: default;
   opacity: 0.7;
@@ -91,7 +105,9 @@
 }
 
 .place-grid {
-  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  /* minmax(0, …) lets columns shrink below their content's intrinsic width, so a
+   * long unbreakable number (e.g. 100,000,000) can't force horizontal scroll. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .difficulty-card,
@@ -135,13 +151,23 @@
 }
 
 .place-card {
-  align-items: center;
+  /* min-width:0 lets the card shrink to its grid track instead of being held open
+   * by its content; text-align keeps the (now wrapping) label centered. */
+  min-width: 0;
   text-align: center;
+  padding: 0.85rem 0.6rem;
+}
+
+.place-card__label {
+  /* Long labels ("ten thousands") wrap to fit a narrow card rather than overflow. */
+  overflow-wrap: anywhere;
 }
 
 .place-card__value {
   color: var(--color-muted);
   font-variant-numeric: tabular-nums;
+  /* Fluid so a long magnitude (100,000,000) shrinks to fit a narrow card. */
+  font-size: clamp(0.6rem, 2.6vw, 0.85rem);
 }
 
 /* HUD ------------------------------------------------------------------- */
@@ -254,11 +280,14 @@
   transform: translate(2px, 2px);
 }
 
-/* Cluster of audio controls (mute, next track). */
+/* App-level cluster of audio/settings controls, pinned top-right over every
+ * screen. z-index sits above the screens (1) and the CRT overlay (50) but below
+ * dialogs (100) so modals still cover it. */
 .screen-controls {
-  position: absolute;
+  position: fixed;
   top: 1rem;
   right: 1rem;
+  z-index: 60;
   display: flex;
   gap: 0.5rem;
 }
@@ -280,12 +309,6 @@
 
 .pause-menu .btn {
   width: 100%;
-}
-
-.hud__controls {
-  margin-left: auto;
-  display: flex;
-  gap: 0.5rem;
 }
 
 /* Mascot ---------------------------------------------------------------- */
@@ -386,7 +409,9 @@
 
 .answer-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* minmax(0, …) keeps the two columns within the row: a long unbreakable answer
+   * (e.g. 27,439,873) can't expand its track and push the layout into a scroll. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
   width: 100%;
 }
@@ -397,9 +422,11 @@
   align-items: center;
   justify-content: center;
   min-height: 3.5rem;
-  padding: 1.25rem;
+  padding: 1.1rem 0.5rem;
   font: inherit;
-  font-size: 1rem;
+  /* Fluid so long answers (e.g. 27,439,873) shrink to fit a narrow column instead
+   * of overflowing the button. Tablet+ resets it to a fixed larger size below. */
+  font-size: clamp(0.8rem, 3.4vw, 1rem);
   font-variant-numeric: tabular-nums;
   color: var(--color-text);
   background: var(--color-surface);
@@ -718,6 +745,24 @@
   margin-top: 1.25rem;
 }
 
+.name-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.name-entry__label {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.name-entry__saved {
+  margin: 0;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
 .name-entry__input {
   width: 100%;
   padding: 0.6rem 0.75rem;
@@ -761,6 +806,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.volume-slider {
+  flex: 1;
+  max-width: 12rem;
+  accent-color: var(--color-accent);
+  cursor: pointer;
 }
 
 /* Leaderboard ----------------------------------------------------------- */
@@ -839,7 +891,7 @@
   .screen {
     width: min(48rem, 100%);
     gap: 1.25rem;
-    padding: 3rem 2rem;
+    padding: 4rem 2rem 3rem;
   }
 
   .screen__title {
@@ -860,10 +912,11 @@
   }
 }
 
-/* Phones in landscape / very short viewports: keep it compact. */
+/* Phones in landscape / very short viewports: keep it compact, but still clear
+ * the fixed top controls. */
 @media (max-height: 34rem) {
   .screen {
-    padding: 1rem 1.25rem;
+    padding: 4rem 1.25rem 1rem;
     gap: 0.6rem;
   }
 

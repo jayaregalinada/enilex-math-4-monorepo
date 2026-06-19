@@ -53,9 +53,9 @@ describe('GameScreen', () => {
     useSessionStore.setState({ game: null });
   });
 
-  it('shows the Get ready! countdown on Hard but not on Easy', () => {
+  it('shows the Get ready! countdown on every difficulty', () => {
     const { unmount } = renderGame({
-      initialState: hardState(),
+      initialState: easyState(),
       onExit: vi.fn(),
       onRestart: vi.fn(),
       onQuit: vi.fn(),
@@ -64,13 +64,14 @@ describe('GameScreen', () => {
     unmount();
 
     useSessionStore.setState({ game: null });
-    renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
-    expect(screen.queryByText('Get ready!')).toBeNull();
+    renderGame({ initialState: hardState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
+    expect(screen.getByText('Get ready!')).toBeInTheDocument();
   });
 
   it('renders the prompt for the current question', () => {
     renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
-    expect(screen.getByText(/634,572/)).toBeInTheDocument();
+    // Easy highlights the number via NumberDisplay, exposed as one labelled image.
+    expect(screen.getByRole('img', { name: /634,572/ })).toBeInTheDocument();
     expect(screen.getByText(/hundreds/)).toBeInTheDocument();
   });
 
@@ -83,7 +84,6 @@ describe('GameScreen', () => {
     expect(scoreStat).not.toBeNull();
     expect(within(scoreStat as HTMLElement).getByText('000010')).toBeInTheDocument();
     expect(screen.getByLabelText('5 of 5 lives')).toBeInTheDocument();
-    // Specific name so it doesn't also match the HUD's "Next track" button.
     expect(screen.getByRole('button', { name: 'Next →' })).toBeInTheDocument();
   });
 

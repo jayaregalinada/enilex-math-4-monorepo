@@ -51,8 +51,8 @@ export function useRoundingGame(
 
   const timerMax = DIFFICULTY_CONFIG[state.difficulty].timer;
 
-  // Hard mode opens with a "Get ready!" 3-2-1; the clock stays frozen until "go".
-  const getReady = useGetReady(state.difficulty === 'hard');
+  // Every run opens with a "Get ready!" 3-2-1; on Hard the clock stays frozen until "go".
+  const getReady = useGetReady(true);
 
   const handleTimeout = useCallback(() => {
     useSessionStore.getState().dispatch({ type: 'timeout' });

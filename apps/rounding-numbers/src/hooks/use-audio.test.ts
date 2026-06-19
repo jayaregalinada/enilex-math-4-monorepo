@@ -26,6 +26,7 @@ vi.mock('@/lib/game-audio', () => ({
   gameAudio: {
     resume: vi.fn(),
     setMuted: vi.fn(),
+    setVolume: vi.fn(),
     playSoundEffect: vi.fn(),
     setMusicContext: vi.fn(),
     skipTrack: vi.fn(),
@@ -66,7 +67,7 @@ function easyState(): GameState {
 describe('useAudio', () => {
   beforeEach(() => {
     useSessionStore.setState({ game: null });
-    useSettingsStore.setState({ muted: false });
+    useSettingsStore.setState({ muted: false, volume: 0.8 });
     vi.clearAllMocks();
   });
 
@@ -76,6 +77,16 @@ describe('useAudio', () => {
     renderHook(() => useAudio('general'));
 
     expect(gameAudio.setMuted).toHaveBeenCalledWith(true);
+  });
+
+  it('syncs the volume onto the engine on mount and on change', () => {
+    useSettingsStore.setState({ volume: 0.5 });
+
+    renderHook(() => useAudio('general'));
+    expect(gameAudio.setVolume).toHaveBeenCalledWith(0.5);
+
+    act(() => useSettingsStore.getState().setVolume(0.25));
+    expect(gameAudio.setVolume).toHaveBeenCalledWith(0.25);
   });
 
   it('mirrors later mute toggles onto the engine', () => {

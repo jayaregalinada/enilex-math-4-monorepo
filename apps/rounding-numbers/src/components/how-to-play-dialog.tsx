@@ -4,22 +4,22 @@ import { useSettingsStore } from '@/stores/use-settings-store';
 
 /**
  * Onboarding card explaining the game. On first visit it opens automatically, but
- * only AFTER the sound gate has been answered (`seenSoundPrompt`), so the two
- * first-run modals don't stack. Dismissal is remembered via `seenHowToPlay`, and
- * it stays reopenable from its button. Radix handles focus-trap/Escape/ARIA.
+ * only AFTER the sound gate has been answered this session (`soundReady`), so the
+ * two first-run modals don't stack. Dismissal is remembered via `seenHowToPlay`,
+ * and it stays reopenable from its button. Radix handles focus-trap/Escape/ARIA.
  */
 export function HowToPlayDialog() {
   const seenHowToPlay = useSettingsStore((state) => state.seenHowToPlay);
-  const seenSoundPrompt = useSettingsStore((state) => state.seenSoundPrompt);
+  const soundReady = useSettingsStore((state) => state.soundReady);
   const markHowToPlaySeen = useSettingsStore((state) => state.markHowToPlaySeen);
   const [open, setOpen] = useState(false);
 
   // Auto-open once the sound gate is done, on first visit only.
   useEffect(() => {
-    if (!seenHowToPlay && seenSoundPrompt) {
+    if (!seenHowToPlay && soundReady) {
       setOpen(true);
     }
-  }, [seenHowToPlay, seenSoundPrompt]);
+  }, [seenHowToPlay, soundReady]);
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
@@ -33,7 +33,7 @@ export function HowToPlayDialog() {
   return (
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Trigger asChild>
-        <button type="button" className="btn btn--ghost">
+        <button type="button" className="btn btn--ghost btn--sm">
           How to play
         </button>
       </Dialog.Trigger>

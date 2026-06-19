@@ -1,6 +1,7 @@
 import type { MusicContext } from '@enilex-math-4-pkg/audio';
 import { ThemeProvider } from '@enilex-math-4-pkg/themes';
 import type { ReactNode } from 'react';
+import { ScreenControls } from '@/components/screen-controls';
 import { useAudio } from '@/hooks/use-audio';
 import { useCelebration } from '@/hooks/use-celebration';
 import { type FlowState, type GameFlow, useGameFlow } from '@/hooks/use-game-flow';
@@ -56,8 +57,15 @@ function currentScreen(flow: GameFlow): ReactNode {
   }
 }
 
-/** Hard runs get their own playlist; everything else shares the general pool. */
+/**
+ * The game-over screen gets its own track; Hard runs get their own playlist;
+ * everything else shares the general pool.
+ */
 function musicContextFor(state: FlowState): MusicContext {
+  if (state.screen === 'gameOver') {
+    return 'gameOver';
+  }
+
   if (state.screen === 'game' && state.difficulty === 'hard') {
     return 'hard';
   }
@@ -78,6 +86,8 @@ export function App() {
         {/* Decorative retro FX: animated tiled background behind, CRT/scanlines on top. */}
         <div className="fx-background" aria-hidden="true" />
         {currentScreen(flow)}
+        {/* Always-on audio/settings cluster, floating over every screen. */}
+        <ScreenControls />
         <div className="fx-crt" aria-hidden="true" />
       </div>
     </ThemeProvider>

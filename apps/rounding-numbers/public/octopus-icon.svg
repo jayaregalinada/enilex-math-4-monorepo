@@ -9,17 +9,15 @@
   <rect width="512" height="512" fill="#0d0b1f" />
 
   <!--
-    Octopus pixel-art sprite, scaled up to fill the canvas so there is no empty
-    framing margin around it. The sprite's drawn bounds (grid x4–12, y3–14) are
-    scaled ×40 and centred: that leaves ~36px top/bottom and the sprite's own
-    narrower silhouette at the sides — no dark "border" framing the character.
+    Octopus pixel-art sprite: original 16×16 grid scaled to 320×320 and centered
+    on the 512×512 canvas (offset 96,96). Scale factor = 20.
 
-    The 30% padding the maskable/apple variants add (in pwa-assets.config.ts)
-    keeps the character inside the safe circle for those purposes.
+    Maskable safe zone: content sits within the inner ~62.5% (320/512), well
+    inside the 80% maskable circle — safe for circular crop on all platforms.
 
-    Source: packages/themes/src/mascot-octopus.tsx (cheer mood — smiling).
+    Source: packages/themes/src/mascot-octopus.tsx (idle mood).
   -->
-  <g transform="translate(-64, -84) scale(40)">
+  <g transform="translate(96, 96) scale(20)">
     <!-- Head / mantle -->
     <path d="M4 5 L5 3 L11 3 L12 5 L12 10 L4 10 Z" fill="#a855f7" />
     <!-- Tentacles -->
@@ -32,7 +30,7 @@
     <!-- Pupils -->
     <rect x="7" y="6" width="1" height="1" fill="#1a1a2e" />
     <rect x="9" y="6" width="1" height="1" fill="#1a1a2e" />
-    <!-- Mouth (cheer) — open smile -->
-    <path d="M6 8 L7 9 L9 9 L10 8 Z" fill="#5b1192" />
+    <!-- Mouth (idle) -->
+    <rect x="7" y="8" width="2" height="1" fill="#5b1192" />
   </g>
 </svg>

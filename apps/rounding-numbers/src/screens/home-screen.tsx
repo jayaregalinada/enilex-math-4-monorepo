@@ -1,5 +1,6 @@
 import { Mascot } from '@enilex-math-4-pkg/themes';
 import { HowToPlayDialog } from '@/components/how-to-play-dialog';
+import { InstallDialog } from '@/components/install-dialog';
 import { SoundGateDialog } from '@/components/sound-gate-dialog';
 
 export interface HomeScreenProps {
@@ -24,6 +25,7 @@ export function HomeScreen({ onPlay, onLeaderboard }: HomeScreenProps) {
         Leaderboard
       </button>
       <HowToPlayDialog />
+      <InstallDialog />
       <SoundGateDialog />
     </section>
   );

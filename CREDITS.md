@@ -30,7 +30,9 @@ you, not us."*). They are therefore the owner's work, released under this repo's
 
 | File | Pool | Generator | Rights |
 |------|------|-----------|--------|
+| `chill-track-2-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
 | `dark-and-ominus-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
+| `kawaii-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
 | `level-up-division-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
 | `track-2-treblo.ogg` | general | Treblo (Sonauto, Inc.) | Owned by project per Treblo ToS §8 · MIT · no attribution required |
 
@@ -41,20 +43,29 @@ you, not us."*). They are therefore the owner's work, released under this repo's
 
 ### Third-party — local dev use only (NOT committed)
 
-These play in local development but are **not committed**: the licence permits
-using the music *inside* a work, yet **forbids redistributing the raw audio file**
-— and committing an `.mp3` to this public MIT repo *is* standalone redistribution.
-They stay gitignored; the synthesized fallback (`packages/audio` → `MUSIC_TRACKS`)
-covers any pool left empty (currently the Hard pool).
+These play in local development but are **not committed**: each licence permits
+using the music *inside* a work, yet none permits **redistributing the raw audio
+file** — and committing an `.ogg` to this public MIT repo *is* standalone
+redistribution. They stay gitignored; the synthesized fallback (`packages/audio`
+→ `MUSIC_TRACKS`) covers any pool left empty (currently the Hard pool, which is
+entirely FesliyanStudios). The **game-over** pool has no synth fallback, so until
+an owned/redistributable jingle replaces the Suno files it is silent in any build
+that omits them.
 
 | File | Title | Author / Source | Licence | Committable? |
 |------|-------|-----------------|---------|--------------|
 | `retro-funk-fesliyan-studios.ogg` | 8 Bit Retro Funk | David Renda · FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no |
 | `boss-time-feslyan-studios-hard-mode.ogg` | Boss Time | FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no |
 | `retro-platforming-david-fesliyan-hard-mode.ogg` | Retro Platforming | David Fesliyan · FesliyanStudios.com | FesliyanStudios free licence (attribution; no file redistribution) | ❌ no |
+| `ping-suno-game-over.ogg` | game-over jingle | Generated with [Suno](https://suno.com) (free tier) | Suno free-tier: non-commercial only, Suno retains ownership — not redistributable | ❌ no |
+| `pulse-suno-game-over.ogg` | game-over jingle | Generated with [Suno](https://suno.com) (free tier) | Suno free-tier: non-commercial only, Suno retains ownership — not redistributable | ❌ no |
+| `chill-calming-chiptune-loop-reganati.ogg` | Chill Calming Chiptune Loop | [Reganati](https://pixabay.com/users/reganati-46795721/) · [Pixabay](https://pixabay.com) | Pixabay Content License (use within a work; no standalone file redistribution) | ❌ no |
 
 **Thanks** — with appreciation for the music used locally during development:
-**[FesliyanStudios](https://www.fesliyanstudios.com)** (David Renda, David Fesliyan).
+**[FesliyanStudios](https://www.fesliyanstudios.com)** (David Renda, David
+Fesliyan), **[Suno](https://suno.com)**, and
+**[Reganati](https://pixabay.com/users/reganati-46795721/)** via
+**[Pixabay](https://pixabay.com)**.
 
 ### Adding more committable music
 
@@ -67,8 +78,21 @@ or **AI output you own** (as above). Redistribution-friendly sources include
 
 ## Fonts
 
-System font stack only (`system-ui`, `-apple-system`, `Segoe UI`, `Roboto`,
-sans-serif). No bundled font files — nothing to credit.
+`apps/rounding-numbers/public/fonts/`
+
+The 8-bit display face (`--font-pixel`) is a self-hosted, vendored OFL asset —
+see [ADR 0007](./docs/adr/0007-vendored-ofl-pixel-font.md). Body text still uses
+the system font stack (`system-ui`, `-apple-system`, `Segoe UI`, `Roboto`,
+sans-serif), which needs no credit.
+
+| File | Font | Author / Source | Licence | Committable? |
+|------|------|-----------------|---------|--------------|
+| `press-start-2p.woff2` | Press Start 2P | CodeMan38 (cody@zone38.net) · [Google Fonts](https://fonts.google.com/specimen/Press+Start+2P) | SIL Open Font License 1.1 — full text in [`public/fonts/OFL.txt`](./apps/rounding-numbers/public/fonts/OFL.txt) | ✅ yes |
+
+OFL 1.1 permits bundling and redistribution inside this MIT repo provided the
+licence notice travels with the font (`OFL.txt`, kept alongside the file) and the
+font is not sold on its own — both satisfied. The file is unmodified and its
+Reserved Font Name ("Press Start 2P") is preserved.
 
 ## Code / libraries
 
@@ -78,4 +102,5 @@ vendored code that falls outside that gate (none at present).
 
 ## Others
 
-Music by <a href="https://pixabay.com/users/reganati-46795721/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=527182">Reganati</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=527182">Pixabay</a>
+None — the Reganati / Pixabay music attribution now lives under
+[Audio — background music](#audio--background-music).

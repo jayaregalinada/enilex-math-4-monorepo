@@ -4,7 +4,10 @@
   width="512"
   height="512"
   shape-rendering="crispEdges"
+  role="img"
+  aria-label="Octopus mascot"
 >
+  <title>Octopus mascot</title>
   <!-- Background fill -->
   <rect width="512" height="512" fill="#0d0b1f" />
 

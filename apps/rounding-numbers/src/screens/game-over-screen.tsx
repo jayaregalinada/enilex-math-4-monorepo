@@ -33,10 +33,13 @@ export function GameOverScreen({
         <button type="button" className="btn btn--primary" onClick={onPlayAgain}>
           Play again
         </button>
-        <button type="button" className="btn btn--ghost" onClick={onLeaderboard}>
-          Leaderboard
-        </button>
       </div>
+      {/* Leaderboard is a secondary action, set below and de-emphasised so it
+          doesn't crowd the primary "Play again" and the page stays compact on
+          short screens (mirrors the home screen's Play / Leaderboard stack). */}
+      <button type="button" className="btn btn--ghost btn--sm" onClick={onLeaderboard}>
+        Leaderboard
+      </button>
     </section>
   );
 }

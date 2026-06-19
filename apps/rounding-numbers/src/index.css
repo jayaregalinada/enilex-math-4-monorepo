@@ -90,6 +90,92 @@ body {
   }
 }
 
+/* Per-theme motifs (ADR 0008): each theme gets a distinct, palette-tinted
+ * pixel-art background built purely from CSS gradients. Opacity stays low so
+ * game numbers remain legible. The default `.fx-background` above is the
+ * cosmic-ish fallback if `data-theme` is ever missing. */
+
+/* Cosmic: a scattered starfield — two offset dot grids at different scales. */
+.theme-root[data-theme="cosmic"] .fx-background {
+  background-image:
+    radial-gradient(var(--color-accent) 1px, transparent 1px),
+    radial-gradient(var(--color-bg-accent) 1px, transparent 1px),
+    radial-gradient(var(--color-accent) 1px, transparent 1px);
+  background-size:
+    40px 40px,
+    24px 24px,
+    64px 64px;
+  background-position:
+    0 0,
+    12px 12px,
+    32px 18px;
+}
+
+/* Ocean: rising bubbles over gentle wavy horizontal bands. */
+.theme-root[data-theme="ocean"] .fx-background {
+  background-image:
+    radial-gradient(circle, var(--color-accent) 2px, transparent 3px),
+    radial-gradient(circle, var(--color-bg-accent) 1px, transparent 2px),
+    repeating-linear-gradient(
+      to bottom,
+      var(--color-bg-accent) 0,
+      var(--color-bg-accent) 2px,
+      transparent 2px,
+      transparent 28px
+    );
+  background-size:
+    48px 48px,
+    32px 32px,
+    100% 28px;
+  background-position:
+    0 0,
+    16px 24px,
+    0 0;
+}
+
+/* Jungle: diagonal foliage stripes crossed with a leafy dot lattice. */
+.theme-root[data-theme="jungle"] .fx-background {
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      var(--color-accent) 0,
+      var(--color-accent) 3px,
+      transparent 3px,
+      transparent 22px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      var(--color-bg-accent) 0,
+      var(--color-bg-accent) 2px,
+      transparent 2px,
+      transparent 22px
+    );
+  background-size:
+    32px 32px,
+    32px 32px;
+  background-position:
+    0 0,
+    0 0;
+}
+
+/* Candy: a two-tone checkerboard with candy dots dropped on top. */
+.theme-root[data-theme="candy"] .fx-background {
+  background-image:
+    radial-gradient(circle, var(--color-accent) 2px, transparent 3px),
+    conic-gradient(
+      var(--color-bg-accent) 0deg 90deg,
+      transparent 90deg 180deg,
+      var(--color-bg-accent) 180deg 270deg,
+      transparent 270deg 360deg
+    );
+  background-size:
+    48px 48px,
+    32px 32px;
+  background-position:
+    0 0,
+    0 0;
+}
+
 /* CRT overlay: faint scanlines + a soft vignette. Must stay subtle so numbers
  * remain legible. Never intercepts pointer events. */
 .fx-crt {
@@ -112,12 +198,27 @@ body {
   background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.35) 100%);
 }
 
-/* Reduced: freeze + dim the background and drop the CRT entirely. */
-.app-shell--reduced .fx-background {
+/* Reduced: freeze + dim the background and drop the CRT entirely. This must win
+ * over every per-theme `.fx-background` rule above. Those selectors have higher
+ * specificity (0,3,0) than a plain `.app-shell--reduced .fx-background` (0,2,0),
+ * so we scope the reduced override under `.theme-root` to match that specificity
+ * (0,3,0) — and place it last so it wins the cascade for all four themes. The
+ * base (untyped) selector keeps the default `.fx-background` reduced too. */
+.app-shell--reduced .fx-background,
+.theme-root .app-shell--reduced .fx-background {
   animation: none;
   opacity: 0.05;
 }
 
 .app-shell--reduced .fx-crt {
   display: none;
+}
+
+/* Belt-and-braces: honour OS reduced-motion even if the JS fold-in is bypassed.
+ * Freeze the scroll animation; no new keyframes were added, but this guards the
+ * existing one across all themes. */
+@media (prefers-reduced-motion: reduce) {
+  .fx-background {
+    animation: none;
+  }
 }

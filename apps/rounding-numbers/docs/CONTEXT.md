@@ -101,6 +101,12 @@ stays the same; zero out everything to the right.
   (Home, Difficulty, Picker, Game, Game Over, Leaderboard) carries a consistent
   Back/Home affordance in the same position and pixel-icon style. Quitting confirms
   and discards the run (no leaderboard entry).
+- **Popups pause the run:** Any popup opened during a live game **pauses it** — the
+  countdown freezes and the answers are disabled while it is open, resuming on
+  close. This covers the in-game **Settings** dialog as well as the Pause Menu
+  (the two are independent: opening Settings pauses without summoning the Pause
+  Menu). Every dialog dims **and blurs** the board behind it; the Pause Menu blurs
+  harder so the question can't be read while paused.
 - **Language:** English UI and explanations throughout (matches lesson + PH math
   medium of instruction).
 - **Accessibility:** Digit highlighting is not color-only — the target place uses
@@ -132,8 +138,11 @@ stays the same; zero out everything to the right.
   HUD** — blocky `SCORE`, a persistent `HI-SCORE` (best score from the
   leaderboard), lives as a row of pixel hearts that pop on loss/gain, chunky combo
   meter; (2) **CRT/scanline** overlay (subtle, must keep numbers legible);
-  (3) **pixel-wipe/dither screen transitions** between screens; (4) **animated
-  tiled pixel background** per theme (low-contrast, pauses when reduced).
+  (3) **pixel-wipe/dither screen transitions** between screens; (4) a **per-theme
+  animated pixel background** — each palette paints its own motif (cosmic
+  starfield, ocean bubbles over waves, jungle crosshatch, candy checker), kept
+  low-contrast and frozen + dimmed when reduced; (5) the **Home screen** greets
+  players with the active theme's mascot as a large idle "hero" character.
 - **Feedback/juice:** Playful & animated. Themed mascot reacts (cheer/jump on
   correct, gentle "aww" on wrong — never mocking), answer button green-pop /
   red-shake, correct answer glows, confetti on milestone (every-10) streaks.

@@ -6,6 +6,37 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useSessionStore } from '@/stores/use-session-store';
 import { GameScreen } from './game-screen';
 
+// GameScreen now renders the audio/Settings controls, whose stores persist via
+// localStorage (absent here) and which call into game-audio; stub/mock before import.
+vi.hoisted(() => {
+  const storage = new Map<string, string>();
+  vi.stubGlobal('localStorage', {
+    getItem: (key: string) => storage.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      storage.set(key, value);
+    },
+    removeItem: (key: string) => {
+      storage.delete(key);
+    },
+    clear: () => storage.clear(),
+    key: () => null,
+    length: 0,
+  });
+});
+
+vi.mock('@/lib/game-audio', () => ({
+  gameAudio: {
+    resume: vi.fn(),
+    setMuted: vi.fn(),
+    setVolume: vi.fn(),
+    playSoundEffect: vi.fn(),
+    setMusicContext: vi.fn(),
+    skipTrack: vi.fn(),
+    stopMusic: vi.fn(),
+    dispose: vi.fn(),
+  },
+}));
+
 const [sampleTheme] = THEMES;
 if (sampleTheme === undefined) {
   throw new Error('THEMES must not be empty');
@@ -129,5 +160,22 @@ describe('GameScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
     fireEvent.click(screen.getByRole('button', { name: 'Restart' }));
     expect(onRestart).toHaveBeenCalledOnce();
+  });
+
+  it('pauses the run when the in-game Settings dialog opens, without showing the Pause menu', () => {
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    // Opening Settings pauses the session (freezes the timer, disables answering)...
+    expect(useSessionStore.getState().game?.status).toBe('paused');
+    // ...but must NOT summon the Pause menu, which is its own concern.
+    expect(screen.queryByRole('heading', { name: 'Paused' })).toBeNull();
+  });
+
+  it('resumes the run when the Settings dialog is closed', () => {
+    renderGame({ initialState: easyState(), onExit: vi.fn(), onRestart: vi.fn(), onQuit: vi.fn() });
+    fireEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    expect(useSessionStore.getState().game?.status).toBe('paused');
+    fireEvent.click(screen.getByRole('button', { name: 'Done' }));
+    expect(useSessionStore.getState().game?.status).toBe('playing');
   });
 });

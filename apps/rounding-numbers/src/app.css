@@ -41,3 +41,22 @@
   font-size: 0.95rem;
   color: var(--color-muted);
 }
+
+.home__mascot {
+  width: 7rem;
+  height: 7rem;
+  margin: 0 auto;
+}
+
+.home__mascot .mascot {
+  width: 7rem;
+  height: 7rem;
+}
+
+@media (max-height: 34rem) {
+  .home__mascot,
+  .home__mascot .mascot {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+}

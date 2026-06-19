@@ -86,8 +86,10 @@ export function App() {
         {/* Decorative retro FX: animated tiled background behind, CRT/scanlines on top. */}
         <div className="fx-background" aria-hidden="true" />
         {currentScreen(flow)}
-        {/* Always-on audio/settings cluster, floating over every screen. */}
-        <ScreenControls />
+        {/* Always-on audio/settings cluster, floating over every screen — except
+            in-game, where GameScreen renders its own cluster (adding Pause and a
+            run-pausing Settings). */}
+        {flow.state.screen !== 'game' && <ScreenControls />}
         <div className="fx-crt" aria-hidden="true" />
       </div>
     </ThemeProvider>

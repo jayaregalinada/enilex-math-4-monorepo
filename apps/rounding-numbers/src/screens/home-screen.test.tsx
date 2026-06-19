@@ -33,6 +33,20 @@ vi.mock('@/lib/game-audio', () => ({
 
 const { useSettingsStore } = await import('@/stores/use-settings-store');
 const { HomeScreen } = await import('./home-screen');
+const { THEMES, ThemeProvider } = await import('@enilex-math-4-pkg/themes');
+
+const [theme] = THEMES;
+if (theme === undefined) {
+  throw new Error('THEMES must not be empty');
+}
+
+// HomeScreen renders <Mascot>, which calls useTheme(), so wrap every render in a provider.
+const renderHome = (props: Parameters<typeof HomeScreen>[0]) =>
+  render(
+    <ThemeProvider theme={theme}>
+      <HomeScreen {...props} />
+    </ThemeProvider>,
+  );
 
 describe('HomeScreen', () => {
   beforeEach(() => {
@@ -44,15 +58,20 @@ describe('HomeScreen', () => {
 
   it('plays when the Play button is pressed', () => {
     const onPlay = vi.fn();
-    render(<HomeScreen onPlay={onPlay} onLeaderboard={vi.fn()} />);
+    renderHome({ onPlay, onLeaderboard: vi.fn() });
     fireEvent.click(screen.getByRole('button', { name: 'Play' }));
     expect(onPlay).toHaveBeenCalledOnce();
   });
 
   it('opens the leaderboard when the Leaderboard button is pressed', () => {
     const onLeaderboard = vi.fn();
-    render(<HomeScreen onPlay={vi.fn()} onLeaderboard={onLeaderboard} />);
+    renderHome({ onPlay: vi.fn(), onLeaderboard });
     fireEvent.click(screen.getByRole('button', { name: 'Leaderboard' }));
     expect(onLeaderboard).toHaveBeenCalledOnce();
+  });
+
+  it('shows the theme mascot as a hero character', () => {
+    renderHome({ onPlay: vi.fn(), onLeaderboard: vi.fn() });
+    expect(screen.getByRole('img', { name: /mascot/i })).toBeInTheDocument();
   });
 });
